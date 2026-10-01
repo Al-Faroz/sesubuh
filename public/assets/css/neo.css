@@ -1,0 +1,116 @@
+/* Neomorfisme - Sedekah Subuh MIN 6 Jember */
+:root{
+  --bg:#e6ebf2; --text:#27303f; --muted:#59667b;
+  --accent:#17795f; --accent-hi:#1f9e80;
+  --danger:#b83227; --warn:#a86a0a;
+  --sd:#bcc5d4; --sl:#ffffff; --line:rgba(150,162,184,.35);
+  --raised:6px 6px 14px var(--sd),-6px -6px 14px var(--sl);
+  --raised-sm:4px 4px 9px var(--sd),-4px -4px 9px var(--sl);
+  --inset:inset 4px 4px 9px var(--sd),inset -4px -4px 9px var(--sl);
+  --r:18px; --r-sm:12px;
+}
+*,*::before,*::after{box-sizing:border-box}
+body.neo{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.5}
+.neo a{color:var(--accent);text-decoration:none}
+.neo a:hover{color:var(--accent-hi);text-decoration:none}
+@media (prefers-reduced-motion:reduce){.neo *{transition:none!important}}
+
+/* ===== Shell ===== */
+.neo-shell{display:flex;min-height:100vh}
+.neo-side{width:264px;flex:0 0 264px;padding:20px 16px;position:sticky;top:0;height:100vh;overflow-y:auto}
+.neo-brand{display:flex;align-items:center;gap:12px;padding:14px;margin-bottom:22px;border-radius:var(--r);box-shadow:var(--raised);color:var(--text)!important;font-weight:800;letter-spacing:.02em}
+.neo-brand i{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;box-shadow:var(--inset);color:var(--accent)}
+.neo-brand small{display:block;font-weight:600;color:var(--muted);letter-spacing:0}
+.neo-nav{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.neo-nav a{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:var(--r-sm);color:var(--text);box-shadow:var(--raised-sm);transition:box-shadow .15s,color .15s}
+.neo-nav a i{width:20px;text-align:center;color:var(--muted)}
+.neo-nav a:hover{color:var(--accent)}
+.neo-nav a.active{box-shadow:var(--inset);color:var(--accent);font-weight:700}
+.neo-nav a.active i{color:var(--accent)}
+.neo-nav a.out,.neo-nav a.out i{color:var(--danger)}
+.neo-nav .nav-label{font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding:14px 6px 0}
+.neo-main{flex:1;min-width:0;padding:28px clamp(16px,3vw,38px)}
+.neo-top,.neo-scrim{display:none}
+.neo-foot{margin-top:30px;text-align:center;color:var(--muted);font-size:.85rem}
+.neo-burger{width:44px;height:44px;border:0;border-radius:var(--r-sm);background:var(--bg);box-shadow:var(--raised-sm);color:var(--text);font-size:1.1rem;cursor:pointer}
+.neo-burger:active{box-shadow:var(--inset)}
+@media (max-width:991px){
+  .neo-side{position:fixed;z-index:1040;left:0;top:0;background:var(--bg);box-shadow:var(--raised);transform:translateX(-110%);transition:transform .25s}
+  .neo-shell.open .neo-side{transform:none}
+  .neo-shell.open .neo-scrim{display:block;position:fixed;inset:0;z-index:1030;background:rgba(39,48,63,.35)}
+  .neo-top{display:flex;align-items:center;gap:14px;margin-bottom:20px;font-weight:800}
+}
+
+/* ===== Judul halaman & statistik ===== */
+.page-title,.neo .content-header h1{font-size:1.6rem;font-weight:800;margin:0 0 4px}
+.page-sub{color:var(--muted);margin:0 0 24px}
+.neo .content-header{padding:0 0 18px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:22px;margin-bottom:26px}
+.stat{display:flex;align-items:center;gap:16px;padding:20px;border-radius:var(--r);box-shadow:var(--raised)}
+.stat-ico{flex:0 0 54px;width:54px;height:54px;border-radius:50%;display:grid;place-items:center;font-size:1.2rem;color:var(--accent);box-shadow:var(--inset)}
+.stat-ico.out{color:var(--danger)}
+.stat-ico.warn{color:var(--warn)}
+.stat-val{font-size:1.3rem;font-weight:800;line-height:1.25}
+.stat-lbl{color:var(--muted);font-size:.9rem}
+
+/* ===== Komponen (menimpa Bootstrap/AdminLTE yang masih dipakai halaman lain) ===== */
+.neo .card{background:var(--bg);border:0;border-radius:var(--r);box-shadow:var(--raised);margin-bottom:24px}
+.neo .card-header{background:transparent;border:0;padding:18px 22px 6px;font-weight:700}
+.neo .card-title{margin:0;float:none;font-size:1.05rem}
+.neo .card-body{padding:18px 22px}
+.neo .card-footer{background:transparent;border:0;padding:6px 22px 18px}
+.neo .bg-white,.neo .bg-light{background:var(--bg)!important}
+
+.neo .btn{border:0;border-radius:var(--r-sm);padding:.55rem 1.1rem;font-weight:600;background:var(--bg);color:var(--text);box-shadow:var(--raised-sm);transition:box-shadow .15s,color .15s;cursor:pointer}
+.neo .btn:hover,.neo .btn:focus{background:var(--bg);color:var(--accent);box-shadow:var(--raised-sm)}
+.neo .btn:active,.neo .btn:not(:disabled):not(.disabled):active{background:var(--bg);color:var(--accent);box-shadow:var(--inset)}
+.neo .btn:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.neo .btn-primary,.neo .btn-success,.neo .btn-primary:hover,.neo .btn-success:hover,.neo .btn-primary:focus,.neo .btn-success:focus,
+.neo .btn-primary:not(:disabled):not(.disabled):active,.neo .btn-success:not(:disabled):not(.disabled):active{background:var(--accent);color:#fff}
+.neo .btn-primary:hover,.neo .btn-success:hover{background:var(--accent-hi)}
+.neo .btn-primary:not(:disabled):not(.disabled):active,.neo .btn-success:not(:disabled):not(.disabled):active{box-shadow:inset 3px 3px 8px rgba(0,0,0,.28)}
+.neo .btn-danger,.neo .btn-outline-danger,.neo .btn-danger:hover,.neo .btn-outline-danger:hover{background:var(--bg);color:var(--danger)}
+.neo .btn-sm{padding:.35rem .8rem;font-size:.875rem}
+.neo .btn-xs{padding:.25rem .6rem;font-size:.8rem}
+.neo .btn-block{display:block;width:100%}
+
+.neo label{font-weight:600;color:var(--muted);margin-bottom:.35rem}
+.neo .form-control{height:auto;padding:.6rem .9rem;border:0;border-radius:var(--r-sm);background:var(--bg);color:var(--text);box-shadow:var(--inset)}
+.neo .form-control:focus{background:var(--bg);color:var(--text);outline:3px solid var(--accent);outline-offset:1px;box-shadow:var(--inset)}
+.neo .form-control::placeholder{color:#76839a}
+.neo .input-group{border-radius:var(--r-sm);box-shadow:var(--inset)}
+.neo .input-group .form-control{box-shadow:none;background:transparent}
+.neo .input-group-text{background:transparent;border:0;color:var(--muted)}
+
+.neo .table-responsive{padding:6px;border-radius:var(--r-sm);box-shadow:var(--inset)}
+.neo .table{background:transparent;color:var(--text);margin:0}
+.neo .table th,.neo .table td{border:0;border-bottom:1px solid var(--line);padding:.65rem .8rem;vertical-align:middle}
+.neo .table thead th{color:var(--muted);font-size:.78rem;text-transform:uppercase;letter-spacing:.05em;border-bottom:2px solid var(--line)}
+.neo .table-bordered th,.neo .table-bordered td{border:1px solid var(--line)}
+.neo .table-striped tbody tr:nth-of-type(odd){background:rgba(255,255,255,.35)}
+.neo .table tbody tr:hover{background:rgba(23,121,95,.07)}
+
+.neo .alert{margin-bottom:20px;padding:.85rem 1.1rem;border:0;border-radius:var(--r-sm);background:var(--bg);box-shadow:var(--inset);font-weight:600}
+.neo .alert-success{color:var(--accent)}
+.neo .alert-danger{color:var(--danger)}
+.neo .alert-warning{color:var(--warn)}
+.neo .close{float:right;border:0;background:none;color:inherit;font-size:1.3rem;line-height:1;opacity:.7;cursor:pointer}
+.neo .badge{padding:.3em .75em;border-radius:999px;background:var(--bg);color:var(--accent);box-shadow:var(--raised-sm)}
+
+.neo .modal-content{background:var(--bg);border:0;border-radius:var(--r);box-shadow:var(--raised)}
+.neo .modal-header,.neo .modal-footer{border:0}
+.neo .modal-header.bg-primary{background:transparent!important}
+.neo .modal-header .text-white,.neo .modal-header.text-white{color:var(--text)!important}
+
+/* ===== Login ===== */
+.login-wrap{min-height:100vh;display:grid;place-items:center;padding:20px}
+.login-card{width:100%;max-width:400px;padding:34px 30px;border-radius:26px;box-shadow:var(--raised)}
+.login-logo{width:68px;height:68px;margin:0 auto 14px;border-radius:50%;display:grid;place-items:center;font-size:1.6rem;color:var(--accent);box-shadow:var(--inset)}
+.login-card h1{margin:0;text-align:center;font-size:1.5rem;font-weight:800}
+.login-card .sub{text-align:center;color:var(--muted);margin:2px 0 24px}
+.field{position:relative;margin-bottom:18px}
+.field i{position:absolute;left:16px;top:50%;transform:translateY(-50%);color:var(--muted)}
+.field input{width:100%;padding:.8rem 1rem .8rem 2.8rem;border:0;border-radius:var(--r-sm);background:var(--bg);color:var(--text);box-shadow:var(--inset);font:inherit}
+.field input:focus{outline:3px solid var(--accent);outline-offset:1px}
+.login-card .btn-block{padding:.8rem}
+.login-back{display:block;text-align:center;margin-top:18px;font-size:.9rem}

@@ -13,14 +13,6 @@
 
 <section class="content">
     <div class="container-fluid">
-        <?php if (session()->getFlashdata('success')) : ?>
-            <div class="alert alert-success alert-dismissible">
-                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                <h5><i class="icon fas fa-check"></i> Sukses!</h5>
-                <?= session()->getFlashdata('success') ?>
-            </div>
-        <?php endif; ?>
-
         <form action="<?= base_url('admin/debet/save') ?>" method="post">
             <?= csrf_field() ?>
             <div class="card card-primary card-outline">

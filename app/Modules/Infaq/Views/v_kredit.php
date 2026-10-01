@@ -9,10 +9,6 @@
 
 <section class="content">
     <div class="container-fluid">
-        <?php if (session()->getFlashdata('success')) : ?>
-            <div class="alert alert-success"><?= session()->getFlashdata('success') ?></div>
-        <?php endif; ?>
-
         <div class="row">
             <div class="col-md-4">
                 <div class="card card-danger">
