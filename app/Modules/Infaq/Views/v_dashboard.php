@@ -8,21 +8,21 @@
     <div class="stat">
         <div class="stat-ico"><i class="fas fa-arrow-down"></i></div>
         <div>
-            <div class="stat-val">Rp <?= number_format($total_pemasukan, 0, ',', '.') ?></div>
+            <div class="stat-val in"><span class="cur">Rp</span><?= number_format($total_pemasukan, 0, ',', '.') ?></div>
             <div class="stat-lbl">Total Pemasukan</div>
         </div>
     </div>
     <div class="stat">
         <div class="stat-ico out"><i class="fas fa-arrow-up"></i></div>
         <div>
-            <div class="stat-val">Rp <?= number_format($total_pengeluaran, 0, ',', '.') ?></div>
+            <div class="stat-val out"><span class="cur">Rp</span><?= number_format($total_pengeluaran, 0, ',', '.') ?></div>
             <div class="stat-lbl">Total Pengeluaran</div>
         </div>
     </div>
     <div class="stat">
         <div class="stat-ico"><i class="fas fa-wallet"></i></div>
         <div>
-            <div class="stat-val">Rp <?= number_format($saldo_akhir, 0, ',', '.') ?></div>
+            <div class="stat-val"><span class="cur">Rp</span><?= number_format($saldo_akhir, 0, ',', '.') ?></div>
             <div class="stat-lbl">Saldo Kas Saat Ini</div>
         </div>
     </div>
