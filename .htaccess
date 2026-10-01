@@ -1,0 +1,11 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Blokir akses ke file sensitif jika ada yang mencoba akses via URL
+    RewriteRule ^(app|system|writable|tests|.env|composer.json|composer.lock|spark) - [F,L]
+
+    # Standar CI4 untuk menghilangkan index.php
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^(.*)$ index.php/$1 [L]
+</IfModule>
