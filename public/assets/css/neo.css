@@ -62,13 +62,12 @@ body.neo{margin:0;background:var(--bg);color:var(--text);font-family:var(--font)
 
 /* ===== Komponen (menimpa Bootstrap/AdminLTE yang masih dipakai halaman lain) ===== */
 .neo .card{background:var(--bg);border:0;border-radius:var(--r);box-shadow:var(--raised);margin-bottom:24px}
-.neo .card-header{background:transparent;border:0;padding:18px 22px 6px;font-weight:700}
+.neo .card-header{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;background:transparent;border:0;padding:18px 22px 6px;font-weight:700}
 .neo .card-title{margin:0;float:none;font-size:1.05rem}
 .neo .card-body{padding:18px 22px}
 .neo .card-footer{background:transparent;border:0;padding:6px 22px 18px}
-.neo .bg-white,.neo .bg-light{background:var(--bg)!important}
 
-.neo .btn{border:0;border-radius:var(--r-sm);padding:.55rem 1.1rem;font-weight:600;background:var(--bg);color:var(--text);box-shadow:var(--raised-sm);transition:box-shadow .15s,color .15s;cursor:pointer}
+.neo .btn{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;line-height:1.3;text-align:center;text-decoration:none;border:0;border-radius:var(--r-sm);padding:.55rem 1.1rem;font-weight:600;background:var(--bg);color:var(--text);box-shadow:var(--raised-sm);transition:box-shadow .15s,color .15s;cursor:pointer}
 .neo .btn:hover,.neo .btn:focus{background:var(--bg);color:var(--accent);box-shadow:var(--raised-sm)}
 .neo .btn:active,.neo .btn:not(:disabled):not(.disabled):active{background:var(--bg);color:var(--accent);box-shadow:var(--inset)}
 .neo .btn:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
@@ -82,16 +81,13 @@ body.neo{margin:0;background:var(--bg);color:var(--text);font-family:var(--font)
 .neo .btn-block{display:block;width:100%}
 
 .neo label{font-size:.9rem;font-weight:600;color:var(--muted);margin-bottom:.35rem}
-.neo .form-control{height:auto;padding:.6rem .9rem;border:0;border-radius:var(--r-sm);background:var(--bg);color:var(--text);box-shadow:var(--inset)}
+.neo .form-control{display:block;width:100%;height:auto;padding:.6rem .9rem;border:0;border-radius:var(--r-sm);background:var(--bg);color:var(--text);box-shadow:var(--inset)}
 .neo .form-control:focus{background:var(--bg);color:var(--text);outline:3px solid var(--accent);outline-offset:1px;box-shadow:var(--inset)}
 .neo .form-control::placeholder{color:#76839a}
-.neo .input-group{border-radius:var(--r-sm);box-shadow:var(--inset)}
-.neo .input-group .form-control{box-shadow:none;background:transparent}
-.neo .input-group-text{background:transparent;border:0;color:var(--muted)}
 
 .neo .table-responsive{padding:6px;border-radius:var(--r-sm);box-shadow:var(--inset)}
-.neo .table{background:transparent;color:var(--text);margin:0;font-size:.92rem;font-variant-numeric:tabular-nums}
-.neo .table th,.neo .table td{border:0;border-bottom:1px solid var(--line);padding:.65rem .8rem;vertical-align:middle}
+.neo .table{width:100%;border-collapse:collapse;background:transparent;color:var(--text);margin:0;font-size:.92rem;font-variant-numeric:tabular-nums}
+.neo .table th,.neo .table td{text-align:left;border:0;border-bottom:1px solid var(--line);padding:.65rem .8rem;vertical-align:middle}
 .neo .table thead th{color:var(--muted);font-size:.78rem;text-transform:uppercase;letter-spacing:.05em;border-bottom:2px solid var(--line)}
 .neo .table-bordered th,.neo .table-bordered td{border:1px solid var(--line)}
 .neo .table-striped tbody tr:nth-of-type(odd){background:rgba(255,255,255,.35)}
@@ -101,13 +97,7 @@ body.neo{margin:0;background:var(--bg);color:var(--text);font-family:var(--font)
 .neo .alert-success{color:var(--accent)}
 .neo .alert-danger{color:var(--danger)}
 .neo .alert-warning{color:var(--warn)}
-.neo .close{float:right;border:0;background:none;color:inherit;font-size:1.3rem;line-height:1;opacity:.7;cursor:pointer}
-.neo .badge{padding:.3em .75em;border-radius:999px;background:var(--bg);color:var(--accent);box-shadow:var(--raised-sm)}
 
-.neo .modal-content{background:var(--bg);border:0;border-radius:var(--r);box-shadow:var(--raised)}
-.neo .modal-header,.neo .modal-footer{border:0}
-.neo .modal-header.bg-primary{background:transparent!important}
-.neo .modal-header .text-white,.neo .modal-header.text-white{color:var(--text)!important}
 
 /* ===== Login ===== */
 .login-wrap{min-height:100vh;display:grid;place-items:center;padding:20px}
@@ -116,8 +106,240 @@ body.neo{margin:0;background:var(--bg);color:var(--text);font-family:var(--font)
 .login-card h1{margin:0;text-align:center;font-size:1.45rem;font-weight:700}
 .login-card .sub{text-align:center;color:var(--muted);margin:2px 0 24px}
 .field{position:relative;margin-bottom:18px}
-.field i{position:absolute;left:16px;top:50%;transform:translateY(-50%);color:var(--muted)}
+.field>i{position:absolute;left:16px;top:50%;transform:translateY(-50%);color:var(--muted)}
 .field input{width:100%;padding:.8rem 1rem .8rem 2.8rem;border:0;border-radius:var(--r-sm);background:var(--bg);color:var(--text);box-shadow:var(--inset);font:inherit}
 .field input:focus{outline:3px solid var(--accent);outline-offset:1px}
 .login-card .btn-block{padding:.8rem}
 .login-back{display:block;text-align:center;margin-top:18px;font-size:.9rem}
+
+/* ===== Dasar & utilitas (pengganti Bootstrap) ===== */
+.neo .text-center,.neo .table .text-center{text-align:center}
+.neo .text-right,.neo .table .text-right{text-align:right}
+.neo .text-muted{color:var(--muted)}
+.neo .text-danger{color:var(--danger)}
+.neo .nowrap{white-space:nowrap}
+.neo .fw-b{font-weight:700}
+.neo .mb-0{margin-bottom:0}
+.neo .mt-3{margin-top:24px}
+.neo .btn-lg{padding:.75rem 1.4rem;font-size:1rem}
+.neo .form-control-lg{padding:.75rem 1rem;font-size:1.05rem}
+.neo textarea.form-control{resize:vertical}
+.neo .form-group{margin-bottom:16px}
+.neo .form-group label{display:block}
+.neo .hint{color:var(--muted);font-size:.85rem;margin-top:6px}
+.neo .toolbar{display:flex;flex-wrap:wrap;gap:16px;align-items:flex-end;justify-content:space-between}
+.neo .toolbar .form-group{margin:0}
+.neo .toolbar-actions{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.neo .split{display:grid;grid-template-columns:minmax(260px,1fr) 2fr;gap:24px;align-items:start}
+@media (max-width:900px){.neo .split{grid-template-columns:1fr}}
+.neo .money{display:flex;align-items:center;gap:8px;padding:0 12px;border-radius:var(--r-sm);box-shadow:var(--inset)}
+.neo .money b{color:var(--muted)}
+.neo .money input{flex:1;min-width:0;border:0;background:transparent;box-shadow:none;padding:.7rem .3rem;font:inherit;font-size:1.05rem;color:var(--text);font-variant-numeric:tabular-nums}
+.neo .money:focus-within{outline:3px solid var(--accent);outline-offset:1px}
+.neo .money input:focus{outline:0}
+.neo select.form-control{appearance:auto}
+.neo .report-title{text-align:center;margin:8px 0 18px}
+.neo .report-title h2{margin:0;font-size:1.2rem;font-weight:700;text-transform:uppercase}
+.neo .report-title p{margin:4px 0 0;color:var(--muted)}
+.neo .thead-accent th{background:var(--accent);color:#fff}
+.neo .row-total td{font-weight:700;background:rgba(255,255,255,.45)}
+.neo .table-matrik{font-size:.82rem}
+.neo .table-matrik th small{font-weight:500;opacity:.85}
+.neo .sign{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:40px;text-align:center}
+.neo .sign .space{height:70px}
+
+/* ===== Dialog (modal bawaan browser) ===== */
+.neo-dialog{max-height:90vh;overflow:auto;width:92%;max-width:440px;padding:0;border:0;border-radius:var(--r);background:var(--bg);color:var(--text);box-shadow:var(--raised)}
+.neo-dialog::backdrop{background:rgba(31,41,55,.45)}
+.neo-dialog form{padding:22px}
+.neo-dialog h3{margin:0 0 16px;font-size:1.15rem;font-weight:700}
+.neo-dialog .actions{display:flex;justify-content:flex-end;gap:12px;margin-top:8px}
+
+/* ===== Cetak ===== */
+@media print{
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .neo-side,.neo-top,.neo-foot,.neo-scrim,.no-print,.neo .alert{display:none!important}
+  body.neo{background:#fff;color:#000;font-size:11pt}
+  .neo-shell{display:block}
+  .neo-main{padding:0}
+  .neo .card,.neo .stat{box-shadow:none!important;background:#fff!important}
+  .neo .table-responsive{box-shadow:none;padding:0}
+  .neo .table th,.neo .table td{border:1px solid #333!important;color:#000;padding:3px 5px}
+  .neo .thead-accent th{background:#cfe8df!important;color:#000!important}
+  .neo .row-total td{background:#eee!important}
+  .neo .avoid-break{page-break-inside:avoid}
+  @page{margin:.8cm}
+}
+
+/* ===== Tampilkan password ===== */
+.field input{padding-right:3rem}
+.toggle-pass{position:absolute;right:6px;top:50%;transform:translateY(-50%);width:42px;height:42px;border:0;border-radius:var(--r-sm);background:transparent;color:var(--muted);font-size:1rem;cursor:pointer}
+.toggle-pass:hover{color:var(--accent)}
+.toggle-pass:focus-visible{outline:3px solid var(--accent)}
+
+/* ===== Responsif ===== */
+.neo .table-responsive{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.neo .split>*{min-width:0}
+.neo .table-wide{min-width:640px}
+.neo .table-matrik{min-width:900px}
+.neo .table-matrik th:first-child,.neo .table-matrik td:first-child{position:sticky;left:0;z-index:1;background:var(--bg)}
+.neo .table-matrik thead th:first-child{background:var(--accent);color:#fff}
+.neo .table-matrik .row-total td:first-child{background:#f1f4f8}
+@media (max-width:991px){
+  .neo-top{position:sticky;top:0;z-index:1020;background:var(--bg);padding:10px 0;margin-bottom:12px}
+}
+@media (max-width:640px){
+  .neo-main{padding:14px 14px 28px}
+  .page-title,.neo .content-header h1{font-size:1.3rem}
+  .page-sub{margin-bottom:18px}
+  .neo .card{margin-bottom:18px}
+  .neo .card-body{padding:14px 16px}
+  .neo .card-header{padding:14px 16px 4px}
+  .neo .card-footer{padding:4px 16px 14px}
+  .stats{gap:14px;margin-bottom:18px}
+  .login-card{padding:28px 22px}
+  .neo .toolbar,.neo .toolbar-actions{flex-direction:column;align-items:stretch;gap:12px}
+  .neo .toolbar .form-group{width:100%}
+  .neo .toolbar .btn,.neo .toolbar-actions .btn{width:100%}
+  .neo .btn,.neo .btn-sm{min-height:44px}
+  .neo .form-control,.neo .money input,.field input{font-size:16px}
+  .neo .sign{grid-template-columns:1fr}
+  .neo .money input{padding:.8rem .3rem}
+
+  /* Tabel menjadi kartu per baris */
+  .neo .stack-wrap{padding:0;box-shadow:none;overflow:visible}
+  .neo .table-stack thead{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+  .neo .table-stack,.neo .table-stack tbody,.neo .table-stack tr,.neo .table-stack td{display:block;width:100%}
+  .neo .table-stack tr{margin-bottom:14px;padding:8px 14px;border-radius:var(--r-sm);box-shadow:var(--raised-sm)}
+  .neo .table-stack tr:hover{background:transparent}
+  .neo .table-stack td{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:7px 0;border:0;text-align:right}
+  .neo .table-stack td::before{content:attr(data-label);flex:0 0 auto;font-weight:600;color:var(--muted);text-align:left}
+  .neo .table-stack td.text-center,.neo .table-stack td.text-right{text-align:right}
+}
+@media print{
+  .neo .table-responsive{overflow:visible}
+  .neo .table-matrik{min-width:0}
+  .neo .table-wide{min-width:0}
+  .neo .table-matrik th:first-child,.neo .table-matrik td:first-child{position:static}
+}
+
+/* ===== Token: palet, jarak, mode gelap ===== */
+:root{color-scheme:light;
+  --on-accent:#fff;--surface-2:rgba(255,255,255,.4);--surface-solid:#f1f4f8;--ph:#6b778c;
+  --ok:#0f6b52;--ok-soft:#d3eee4;--bad:#a3231b;--bad-soft:#f8dcd9;--info:#0b5a86;--info-soft:#d4eaf7;--violet:#5b3fa8;--violet-soft:#e4dcf7;--warn-soft:#f6e6c3;
+  --s1:4px;--s2:8px;--s3:12px;--s4:16px;--s5:24px;--s6:32px}
+[data-theme="dark"]{color-scheme:dark;
+  --bg:#232938;--text:#e8ecf4;--muted:#a8b3c9;--accent:#34d399;--accent-hi:#6ee7b7;--danger:#f87171;--warn:#fbbf24;
+  --sd:#171c28;--sl:#323a52;--line:rgba(168,179,201,.22);
+  --on-accent:#06281f;--surface-2:rgba(255,255,255,.045);--surface-solid:#2a3144;--ph:#8794ad;
+  --ok:#6ee7b7;--ok-soft:rgba(52,211,153,.16);--bad:#fca5a5;--bad-soft:rgba(248,113,113,.16);
+  --info:#7dd3fc;--info-soft:rgba(56,189,248,.16);--violet:#c4b5fd;--violet-soft:rgba(167,139,250,.16);--warn-soft:rgba(251,191,36,.16)}
+.neo .form-control::placeholder{color:var(--ph)}
+.neo .btn-primary,.neo .btn-success,.neo .btn-primary:hover,.neo .btn-success:hover,.neo .btn-primary:focus,.neo .btn-success:focus,
+.neo .btn-primary:not(:disabled):not(.disabled):active,.neo .btn-success:not(:disabled):not(.disabled):active{color:var(--on-accent)}
+.neo .btn-info{color:var(--info)}
+.neo .btn-warning{color:var(--warn)}
+.neo .btn-danger,.neo .btn-outline-danger{color:var(--bad)}
+
+/* Ikon berwarna */
+.ic-ok{color:var(--ok)!important}.ic-bad{color:var(--bad)!important}.ic-info{color:var(--info)!important}
+.ic-violet{color:var(--violet)!important}.ic-warn{color:var(--warn)!important}
+.neo-nav a i,.neo-nav .nav-btn i{width:22px;text-align:center}
+.stat-ico{color:var(--ok)}.stat-ico.out{color:var(--bad)}.stat-ico.info{color:var(--info)}.stat-ico.warn{color:var(--warn)}
+.stat-val.in{color:var(--ok)}.stat-val.out{color:var(--bad)}
+
+/* Tombol tema */
+.theme-toggle,.neo-nav .nav-btn{border:0;background:var(--bg);color:var(--text);box-shadow:var(--raised-sm);cursor:pointer}
+.theme-toggle{width:44px;height:44px;border-radius:var(--r-sm);font-size:1.05rem}
+.theme-toggle i{color:var(--warn)}
+.neo-nav .nav-btn{display:flex;align-items:center;gap:12px;width:100%;padding:14px 16px;border-radius:var(--r-sm);font:inherit;font-size:.95rem;font-weight:500;text-align:left}
+.theme-toggle:active,.neo-nav .nav-btn:active{box-shadow:var(--inset)}
+.theme-toggle:focus-visible,.neo-nav .nav-btn:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.theme-float{position:fixed;top:16px;right:16px;z-index:10}
+
+/* Lencana status */
+.neo .badge{display:inline-flex;align-items:center;gap:.45em;padding:.25em .8em;border-radius:999px;font-size:.78rem;font-weight:700;line-height:1.5;white-space:nowrap;background:var(--b-bg,var(--surface-2));color:var(--b-fg,var(--muted))}
+.neo .badge::before{content:"";width:.5em;height:.5em;border-radius:50%;background:currentColor}
+.neo .badge-ok,.neo .badge-accent{--b-bg:var(--ok-soft);--b-fg:var(--ok)}
+.neo .badge-bad{--b-bg:var(--bad-soft);--b-fg:var(--bad)}
+.neo .badge-warn{--b-bg:var(--warn-soft);--b-fg:var(--warn)}
+.neo .badge-info{--b-bg:var(--info-soft);--b-fg:var(--info)}
+.neo .badge-violet{--b-bg:var(--violet-soft);--b-fg:var(--violet)}
+.neo .badge-muted{--b-bg:var(--surface-2);--b-fg:var(--muted)}
+
+/* ===== Skala jarak & ukuran ===== */
+body.neo{font-size:16px}
+.neo-main{padding:var(--s5) clamp(16px,3vw,40px) var(--s6)}
+.neo-content{max-width:1320px;margin:0 auto}
+.neo .card{margin-bottom:var(--s5)}
+.neo .card-header{padding:var(--s5) var(--s5) var(--s2)}
+.neo .card-body{padding:var(--s5)}
+.neo .card-footer{padding:var(--s2) var(--s5) var(--s5)}
+.neo .card-title{font-size:1.1rem}
+.neo .form-group{margin-bottom:20px}
+.neo .form-control{padding:.75rem 1rem}
+.neo .btn{padding:.7rem 1.3rem}
+.neo .btn-sm{padding:.45rem .95rem}
+.stats{gap:var(--s5);margin-bottom:var(--s5)}
+.stat{padding:var(--s5)}
+.page-title,.neo .content-header h1{font-size:1.7rem;margin-bottom:var(--s2)}
+.page-sub{font-size:1rem;margin-bottom:var(--s5)}
+.neo-nav{gap:var(--s3)}
+.neo-nav a{padding:14px 16px}
+.neo-top{gap:var(--s3)}
+
+/* ===== Tabel ===== */
+.neo .table-responsive{padding:var(--s2)}
+.neo .table{font-size:clamp(.9rem,.85rem + .25vw,1rem)}
+.neo .table th,.neo .table td{padding:.9rem 1.05rem;border-bottom:1px solid var(--line)}
+.neo .table thead th{background:var(--surface-2);color:var(--muted);font-size:.76rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;white-space:nowrap}
+.neo .table tbody tr:last-child td{border-bottom:0}
+.neo .table-striped tbody tr:nth-of-type(odd){background:var(--surface-2)}
+.neo .table tbody tr:hover{background:var(--ok-soft)}
+.neo .num-in{color:var(--ok);font-weight:700;font-variant-numeric:tabular-nums}
+.neo .num-out{color:var(--bad);font-weight:700;font-variant-numeric:tabular-nums}
+.neo .table .thead-accent th{background:var(--accent);color:var(--on-accent);border-bottom:0}
+.neo .table-matrik{font-size:clamp(.8rem,.76rem + .2vw,.9rem)}
+.neo .table-matrik th,.neo .table-matrik td{padding:.65rem .75rem}
+.neo .table-matrik thead th:first-child{background:var(--accent);color:var(--on-accent)}
+.neo .row-total td{background:var(--surface-2)}
+.neo .table-matrik .row-total td:first-child{background:var(--surface-solid)}
+.neo .table-matrik td:first-child{background:var(--bg)}
+
+/* ===== Halaman publik ===== */
+.pub-top{position:sticky;top:0;z-index:50;background:var(--bg);box-shadow:0 8px 16px -10px var(--sd)}
+.pub-top .in{max-width:1180px;margin:0 auto;padding:var(--s3) var(--s5);display:flex;align-items:center;gap:var(--s3)}
+.pub-top .brand{display:flex;align-items:center;gap:var(--s3);margin-right:auto;font-weight:800;color:var(--text)!important}
+.pub-top .brand i{color:var(--ok);font-size:1.3rem}
+.pub-wrap{max-width:1180px;margin:0 auto;padding:var(--s5) var(--s5) var(--s6)}
+.pub-hero{text-align:center;padding:var(--s6) 0 var(--s5)}
+.pub-hero h1{margin:var(--s3) 0 var(--s2);font-size:clamp(1.7rem,1.2rem + 2.2vw,2.6rem);font-weight:800;letter-spacing:-.02em}
+.pub-hero p{margin:0;color:var(--muted);font-size:1.05rem}
+.grid-2{display:grid;grid-template-columns:2fr 1fr;gap:var(--s5);align-items:start}
+.grid-2>*{min-width:0}
+.chart-box{position:relative;height:300px}
+.meter-list{list-style:none;margin:0;padding:0;display:grid;gap:var(--s4)}
+.meter-row{display:grid;grid-template-columns:auto 1fr;gap:var(--s3);align-items:center}
+.meter-row .rank{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;font-size:.85rem;font-weight:800;box-shadow:var(--inset)}
+.meter-row .top{display:flex;justify-content:space-between;gap:var(--s2);font-weight:600;margin-bottom:6px}
+.meter-row .top span:last-child{color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+.meter{height:12px;border-radius:999px;box-shadow:var(--inset);overflow:hidden}
+.meter>span{display:block;height:100%;border-radius:999px;background:var(--accent)}
+@media (max-width:900px){.grid-2{grid-template-columns:1fr}.chart-box{height:260px}}
+
+/* ===== Responsif (menimpa skala jarak di layar kecil) ===== */
+@media (max-width:640px){
+  .neo-main{padding:var(--s4) 14px var(--s5)}
+  .neo .card-header{padding:var(--s4) var(--s4) var(--s1)}
+  .neo .card-body{padding:var(--s4)}
+  .neo .card-footer{padding:var(--s1) var(--s4) var(--s4)}
+  .stat{padding:var(--s4)}
+  .stats{gap:var(--s4)}
+  .page-title,.neo .content-header h1{font-size:1.4rem}
+  .pub-top .in,.pub-wrap{padding-left:var(--s4);padding-right:var(--s4)}
+  .neo .table-stack td{font-size:1rem}
+}
+@media print{
+  :root,:root[data-theme="dark"]{--bg:#fff;--text:#000;--muted:#333;--accent:#0f6b52;--on-accent:#000;--ok:#000;--bad:#000;--surface-2:transparent;--surface-solid:#fff;--line:#999}
+  .theme-toggle,.pub-top{display:none!important}
+}

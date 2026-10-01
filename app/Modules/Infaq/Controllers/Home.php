@@ -12,9 +12,23 @@ class Home extends BaseController
         $db = \Config\Database::connect();
         $kelasModel = new \Modules\Infaq\Models\KelasModel();
 
-        // Default: 7 hari terakhir s/d hari ini
-        $tgl_awal  = $this->request->getGet('tgl_awal') ?? date('Y-m-d', strtotime('-6 days'));
-        $tgl_akhir = $this->request->getGet('tgl_akhir') ?? date('Y-m-d');
+        // Default: 7 hari terakhir yang ada datanya
+        $valid = static function ($d) {
+            $x = \DateTime::createFromFormat('Y-m-d', (string) $d);
+            return $x && $x->format('Y-m-d') === $d;
+        };
+        $terakhir  = $db->table('sedekah_masuk')->selectMax('tanggal')->get()->getRow()->tanggal ?? date('Y-m-d');
+        $tgl_akhir = $this->request->getGet('tgl_akhir');
+        $tgl_awal  = $this->request->getGet('tgl_awal');
+        if (! $valid($tgl_akhir)) {
+            $tgl_akhir = $terakhir;
+        }
+        if (! $valid($tgl_awal)) {
+            $tgl_awal = date('Y-m-d', strtotime($tgl_akhir . ' -6 days'));
+        }
+        if ($tgl_awal > $tgl_akhir) {
+            [$tgl_awal, $tgl_akhir] = [$tgl_akhir, $tgl_awal];
+        }
 
         // 1. Widget Box (Tetap Akumulasi Global)
         $pemasukan = $db->table('sedekah_masuk')->selectSum('nominal')->get()->getRow()->nominal ?? 0;
@@ -27,6 +41,22 @@ class Home extends BaseController
             ->orderBy('tanggal', 'DESC') // Terbaru di atas
             ->get()->getResultArray();
 
+        $kelas = $kelasModel->getAktif();
+
+        // Data grafik & peringkat
+        $harian = [];
+        $perKelas = [];
+        foreach ($transaksi as $t) {
+            $harian[$t['tanggal']] = ($harian[$t['tanggal']] ?? 0) + (int) $t['nominal'];
+            $perKelas[$t['id_kelas']] = ($perKelas[$t['id_kelas']] ?? 0) + (int) $t['nominal'];
+        }
+        ksort($harian);
+        $peringkat = [];
+        foreach ($kelas as $k) {
+            $peringkat[] = ['nama' => $k['nama_kelas'], 'total' => $perKelas[$k['id_kelas']] ?? 0];
+        }
+        usort($peringkat, static fn($a, $b) => $b['total'] <=> $a['total']);
+
         $data = [
             'title'             => 'Portal Sedekah Subuh - MIN 6 JEMBER',
             'total_pemasukan'   => $pemasukan,
@@ -34,8 +64,11 @@ class Home extends BaseController
             'saldo_akhir'       => $pemasukan - $pengeluaran,
             'tgl_awal'          => $tgl_awal,
             'tgl_akhir'         => $tgl_akhir,
-            'kelas'             => $kelasModel->getAktif(),
-            'transaksi'         => $transaksi
+            'kelas'             => $kelas,
+            'transaksi'         => $transaksi,
+            'harian'            => $harian,
+            'peringkat'         => $peringkat,
+            'total_periode'     => array_sum($harian),
         ];
 
         return view('Modules\Infaq\Views\v_home', $data);

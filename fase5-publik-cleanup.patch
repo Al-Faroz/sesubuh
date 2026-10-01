@@ -1,0 +1,450 @@
+diff --git a/.gitignore b/.gitignore
+index 5e10082..defa398 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -130,3 +130,13 @@ _modules/*
+ #-------------------------
+ *.sql
+ *.zip
++
++#-------------------------
++# Berkas lokal: sertifikat/kunci, patch, cache PDF
++#-------------------------
++*.pem
++*.key
++*.patch
++localhost+*
++writable/temp/*
++!writable/temp/index.html
+diff --git a/README.md b/README.md
+index d14b4c9..55dee2c 100644
+--- a/README.md
++++ b/README.md
+@@ -1,68 +1,19 @@
+-# CodeIgniter 4 Application Starter
++# Sedekah Subuh - MIN 6 Jember
+ 
+-## What is CodeIgniter?
++Aplikasi pencatatan dan pelaporan sedekah subuh per kelas, dibangun dengan CodeIgniter 4 (modul `Infaq`).
+ 
+-CodeIgniter is a PHP full-stack web framework that is light, fast, flexible and secure.
+-More information can be found at the [official site](https://codeigniter.com).
++## Fitur
++- Portal publik: ringkasan kas, tren harian, partisipasi per kelas, matrik.
++- Panel admin/operator: input setoran, pengeluaran, laporan matrik dan buku kas (PDF), pengaturan pejabat, kelola akun.
++- Mode gelap/terang, tampilan neomorfisme, responsif.
+ 
+-This repository holds a composer-installable app starter.
+-It has been built from the
+-[development repository](https://github.com/codeigniter4/CodeIgniter4).
++## Menjalankan secara lokal
++1. `composer install`
++2. Salin `env` menjadi `.env`, lalu atur `app.baseURL` dan koneksi database.
++3. Impor skema database (tabel `kelas`, `sedekah_masuk`, `sedekah_keluar`, `users`, `pengaturan`, `ci_sessions`).
++4. Buka `http://localhost/sesubuh/`.
+ 
+-More information about the plans for version 4 can be found in [CodeIgniter 4](https://forum.codeigniter.com/forumdisplay.php?fid=28) on the forums.
++## Produksi
++Aktifkan SSL, lalu di `.env` atur `app.baseURL` ke alamat `https://` dan `app.forceGlobalSecure = true`.
+ 
+-You can read the [user guide](https://codeigniter.com/user_guide/)
+-corresponding to the latest version of the framework.
+-
+-## Installation & updates
+-
+-`composer create-project codeigniter4/appstarter` then `composer update` whenever
+-there is a new release of the framework.
+-
+-When updating, check the release notes to see if there are any changes you might need to apply
+-to your `app` folder. The affected files can be copied or merged from
+-`vendor/codeigniter4/framework/app`.
+-
+-## Setup
+-
+-Copy `env` to `.env` and tailor for your app, specifically the baseURL
+-and any database settings.
+-
+-## Important Change with index.php
+-
+-`index.php` is no longer in the root of the project! It has been moved inside the *public* folder,
+-for better security and separation of components.
+-
+-This means that you should configure your web server to "point" to your project's *public* folder, and
+-not to the project root. A better practice would be to configure a virtual host to point there. A poor practice would be to point your web server to the project root and expect to enter *public/...*, as the rest of your logic and the
+-framework are exposed.
+-
+-**Please** read the user guide for a better explanation of how CI4 works!
+-
+-## Repository Management
+-
+-We use GitHub issues, in our main repository, to track **BUGS** and to track approved **DEVELOPMENT** work packages.
+-We use our [forum](http://forum.codeigniter.com) to provide SUPPORT and to discuss
+-FEATURE REQUESTS.
+-
+-This repository is a "distribution" one, built by our release preparation script.
+-Problems with it can be raised on our forum, or as issues in the main repository.
+-
+-## Server Requirements
+-
+-PHP version 8.1 or higher is required, with the following extensions installed:
+-
+-- [intl](http://php.net/manual/en/intl.requirements.php)
+-- [mbstring](http://php.net/manual/en/mbstring.installation.php)
+-
+-> [!WARNING]
+-> - The end of life date for PHP 7.4 was November 28, 2022.
+-> - The end of life date for PHP 8.0 was November 26, 2023.
+-> - If you are still using PHP 7.4 or 8.0, you should upgrade immediately.
+-> - The end of life date for PHP 8.1 will be December 31, 2025.
+-
+-Additionally, make sure that the following extensions are enabled in your PHP:
+-
+-- json (enabled by default - don't turn it off)
+-- [mysqlnd](http://php.net/manual/en/mysqlnd.install.php) if you plan to use MySQL
+-- [libcurl](http://php.net/manual/en/curl.requirements.php) if you plan to use the HTTP\CURLRequest library
++Jangan commit `.env`, berkas `*.sql`, atau sertifikat/kunci ke repo.
+diff --git a/app/Modules/Infaq/Controllers/Home.php b/app/Modules/Infaq/Controllers/Home.php
+index 5d14956..96cdc2f 100644
+--- a/app/Modules/Infaq/Controllers/Home.php
++++ b/app/Modules/Infaq/Controllers/Home.php
+@@ -9,55 +9,67 @@ class Home extends BaseController
+ {
+     public function index()
+     {
+-        $db = \Config\Database::connect();
+-        $kelasModel = new \Modules\Infaq\Models\KelasModel();
++        $db    = \Config\Database::connect();
++        $kelas = (new KelasModel())->getAktif();
+ 
+-        // Default: 7 hari terakhir yang ada datanya
+         $valid = static function ($d) {
+             $x = \DateTime::createFromFormat('Y-m-d', (string) $d);
+             return $x && $x->format('Y-m-d') === $d;
+         };
+-        $terakhir  = $db->table('sedekah_masuk')->selectMax('tanggal')->get()->getRow()->tanggal ?? date('Y-m-d');
+-        $tgl_akhir = $this->request->getGet('tgl_akhir');
++
++        // Default periode: 10 hari terakhir yang ada datanya
+         $tgl_awal  = $this->request->getGet('tgl_awal');
+-        if (! $valid($tgl_akhir)) {
+-            $tgl_akhir = $terakhir;
+-        }
+-        if (! $valid($tgl_awal)) {
+-            $tgl_awal = date('Y-m-d', strtotime($tgl_akhir . ' -6 days'));
++        $tgl_akhir = $this->request->getGet('tgl_akhir');
++        if (! $valid($tgl_awal) || ! $valid($tgl_akhir)) {
++            $hariData  = $db->table('sedekah_masuk')->select('tanggal')->distinct()->orderBy('tanggal', 'DESC')->limit(10)->get()->getResultArray();
++            $tgl_akhir = $hariData[0]['tanggal'] ?? date('Y-m-d');
++            $tgl_awal  = $hariData ? end($hariData)['tanggal'] : $tgl_akhir;
+         }
+         if ($tgl_awal > $tgl_akhir) {
+             [$tgl_awal, $tgl_akhir] = [$tgl_akhir, $tgl_awal];
+         }
+ 
+-        // 1. Widget Box (Tetap Akumulasi Global)
+-        $pemasukan = $db->table('sedekah_masuk')->selectSum('nominal')->get()->getRow()->nominal ?? 0;
++        // Akumulasi global
++        $pemasukan   = $db->table('sedekah_masuk')->selectSum('nominal')->get()->getRow()->nominal ?? 0;
+         $pengeluaran = $db->table('sedekah_keluar')->selectSum('nominal')->get()->getRow()->nominal ?? 0;
+ 
+-        // 2. Data Matrik dalam rentang waktu terpilih
++        // Transaksi pada periode terpilih (terbaru di atas)
+         $transaksi = $db->table('sedekah_masuk')
+             ->where('tanggal >=', $tgl_awal)
+             ->where('tanggal <=', $tgl_akhir)
+-            ->orderBy('tanggal', 'DESC') // Terbaru di atas
++            ->orderBy('tanggal', 'DESC')
+             ->get()->getResultArray();
+ 
+-        $kelas = $kelasModel->getAktif();
+-
+-        // Data grafik & peringkat
+-        $harian = [];
+-        $perKelas = [];
++        // Ringkasan periode
++        $harian = $kelasPerHari = $perKelas = $hariSetor = [];
+         foreach ($transaksi as $t) {
+-            $harian[$t['tanggal']] = ($harian[$t['tanggal']] ?? 0) + (int) $t['nominal'];
+-            $perKelas[$t['id_kelas']] = ($perKelas[$t['id_kelas']] ?? 0) + (int) $t['nominal'];
++            $nom = (int) $t['nominal'];
++            $harian[$t['tanggal']] = ($harian[$t['tanggal']] ?? 0) + $nom;
++            $perKelas[$t['id_kelas']] = ($perKelas[$t['id_kelas']] ?? 0) + $nom;
++            if ($nom > 0) {
++                $kelasPerHari[$t['tanggal']] = ($kelasPerHari[$t['tanggal']] ?? 0) + 1;
++                $hariSetor[$t['id_kelas']]   = ($hariSetor[$t['id_kelas']] ?? 0) + 1;
++            }
+         }
+         ksort($harian);
++
+         $peringkat = [];
+         foreach ($kelas as $k) {
+-            $peringkat[] = ['nama' => $k['nama_kelas'], 'total' => $perKelas[$k['id_kelas']] ?? 0];
++            $peringkat[] = [
++                'nama'  => $k['nama_kelas'],
++                'total' => $perKelas[$k['id_kelas']] ?? 0,
++                'hari'  => $hariSetor[$k['id_kelas']] ?? 0,
++            ];
++        }
++        usort($peringkat, static fn($a, $b) => [$b['total'], $b['hari']] <=> [$a['total'], $a['hari']]);
++
++        $tertinggi = null;
++        if ($harian) {
++            $tgl       = array_search(max($harian), $harian, true);
++            $tertinggi = ['tanggal' => $tgl, 'total' => $harian[$tgl]];
+         }
+-        usort($peringkat, static fn($a, $b) => $b['total'] <=> $a['total']);
+ 
+-        $data = [
++        return view('Modules\Infaq\Views\v_home', [
+             'title'             => 'Portal Sedekah Subuh - MIN 6 JEMBER',
+             'total_pemasukan'   => $pemasukan,
+             'total_pengeluaran' => $pengeluaran,
+@@ -67,10 +79,12 @@ class Home extends BaseController
+             'kelas'             => $kelas,
+             'transaksi'         => $transaksi,
+             'harian'            => $harian,
++            'kelas_per_hari'    => $kelasPerHari,
+             'peringkat'         => $peringkat,
+             'total_periode'     => array_sum($harian),
+-        ];
+-
+-        return view('Modules\Infaq\Views\v_home', $data);
++            'rata_harian'       => $harian ? (int) round(array_sum($harian) / count($harian)) : 0,
++            'tertinggi'         => $tertinggi,
++            'hari_total'        => count($harian),
++        ]);
+     }
+ }
+diff --git a/app/Modules/Infaq/Views/v_home.php b/app/Modules/Infaq/Views/v_home.php
+index 2527431..584250f 100644
+--- a/app/Modules/Infaq/Views/v_home.php
++++ b/app/Modules/Infaq/Views/v_home.php
+@@ -62,37 +62,53 @@
+             </div>
+         </form>
+ 
+-        <div class="grid-2">
+-            <section class="card">
+-                <div class="card-header"><h2 class="card-title"><i class="fas fa-chart-column ic-ok"></i> Tren pemasukan harian</h2><span class="badge badge-ok">Total Rp <?= number_format($total_periode, 0, ',', '.') ?></span></div>
+-                <div class="card-body">
+-                    <?php if ($harian) : ?>
+-                        <div class="chart-box"><canvas id="chart-harian" role="img" aria-label="Grafik batang pemasukan per hari"></canvas></div>
+-                    <?php else : ?>
+-                        <p class="text-muted mb-0">Belum ada data pada periode ini.</p>
+-                    <?php endif; ?>
+-                </div>
+-            </section>
++        <section class="card">
++            <div class="card-header">
++                <h2 class="card-title"><i class="fas fa-chart-line ic-ok"></i> Tren pemasukan harian</h2>
++                <span class="badge badge-info"><?= (int) $hari_total ?> hari aktif</span>
++            </div>
++            <div class="card-body">
++                <?php if ($harian) : ?>
++                    <div class="mini-stats">
++                        <div class="mini"><span class="mini-lbl">Total periode</span><span class="mini-val num-in">Rp <?= number_format($total_periode, 0, ',', '.') ?></span></div>
++                        <div class="mini"><span class="mini-lbl">Rata-rata per hari</span><span class="mini-val">Rp <?= number_format($rata_harian, 0, ',', '.') ?></span></div>
++                        <div class="mini"><span class="mini-lbl">Hari tertinggi</span><span class="mini-val">Rp <?= number_format($tertinggi['total'], 0, ',', '.') ?> <small><?= date('d/m', strtotime($tertinggi['tanggal'])) ?></small></span></div>
++                    </div>
++                    <div class="chart-box"><canvas id="chart-harian" role="img" aria-label="Grafik garis pemasukan per hari"></canvas></div>
++                <?php else : ?>
++                    <p class="text-muted mb-0">Belum ada data pada periode ini.</p>
++                <?php endif; ?>
++            </div>
++        </section>
+ 
+-            <section class="card">
+-                <div class="card-header"><h2 class="card-title"><i class="fas fa-trophy ic-warn"></i> Peringkat kelas</h2></div>
+-                <div class="card-body">
+-                    <?php $totals = array_column($peringkat, 'total');
+-                    $maks = max(1, $totals ? max($totals) : 1); ?>
+-                    <ol class="meter-list">
+-                        <?php foreach ($peringkat as $i => $p) : ?>
+-                            <li class="meter-row">
+-                                <span class="rank"><?= $i + 1 ?></span>
+-                                <div>
+-                                    <div class="top"><span><?= esc($p['nama']) ?></span><span>Rp <?= number_format($p['total'], 0, ',', '.') ?></span></div>
+-                                    <div class="meter" aria-hidden="true"><span style="width:<?= round($p['total'] / $maks * 100) ?>%"></span></div>
+-                                </div>
+-                            </li>
+-                        <?php endforeach; ?>
+-                    </ol>
++        <section class="card">
++            <div class="card-header">
++                <h2 class="card-title"><i class="fas fa-medal ic-warn"></i> Partisipasi per kelas</h2>
++                <span class="hint">Diurutkan menurut total setoran periode ini</span>
++            </div>
++            <div class="card-body">
++                <?php $uniktop = $peringkat && $peringkat[0]['total'] > ($peringkat[1]['total'] ?? 0); ?>
++                <div class="tile-grid">
++                    <?php foreach ($peringkat as $i => $p) : ?>
++                        <article class="tile">
++                            <div class="tile-head">
++                                <span class="tile-name"><?= esc($p['nama']) ?><?php if ($i === 0 && $uniktop) : ?> <i class="fas fa-trophy ic-warn" title="Setoran tertinggi"></i><?php endif; ?></span>
++                                <?php if ($p['total'] <= 0) : ?>
++                                    <span class="badge badge-muted">Belum setor</span>
++                                <?php elseif ($hari_total > 0 && $p['hari'] >= $hari_total) : ?>
++                                    <span class="badge badge-ok">Rutin</span>
++                                <?php else : ?>
++                                    <span class="badge badge-info">Sebagian</span>
++                                <?php endif; ?>
++                            </div>
++                            <div class="tile-amt">Rp <?= number_format($p['total'], 0, ',', '.') ?></div>
++                            <div class="meter" aria-hidden="true"><span style="width:<?= $hari_total ? round($p['hari'] / $hari_total * 100) : 0 ?>%"></span></div>
++                            <div class="hint">Setor <?= (int) $p['hari'] ?> dari <?= (int) $hari_total ?> hari</div>
++                        </article>
++                    <?php endforeach; ?>
+                 </div>
+-            </section>
+-        </div>
++            </div>
++        </section>
+ 
+         <section class="card">
+             <div class="card-header"><h2 class="card-title"><i class="fas fa-table ic-info"></i> Matrik per kelas</h2></div>
+@@ -135,6 +151,8 @@
+     <script type="application/json" id="chart-data"><?= json_encode([
+         'labels' => array_map(static fn($d) => date('d/m', strtotime($d)), array_keys($harian)),
+         'values' => array_values($harian),
++        'kelas'  => array_map(static fn($d) => $kelas_per_hari[$d] ?? 0, array_keys($harian)),
++        'total'  => count($kelas),
+     ], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?></script>
+     <script src="<?= base_url('public/assets/plugins/chart.js/Chart.bundle.min.js') ?>"></script>
+     <script src="<?= base_url('public/assets/js/neo.js') ?>"></script>
+@@ -145,40 +163,47 @@
+             var data = JSON.parse(document.getElementById('chart-data').textContent);
+             var chart;
+ 
+-            function css(name) {
+-                return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+-            }
+-
+-            function rupiah(n) {
+-                return 'Rp ' + Number(n).toLocaleString('id-ID');
++            function css(n) { return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
++            function rgba(hex, a) {
++                var h = hex.replace('#', '');
++                if (h.length === 3) h = h.replace(/(.)/g, '$1$1');
++                var n = parseInt(h, 16);
++                return 'rgba(' + (n >> 16) + ',' + ((n >> 8) & 255) + ',' + (n & 255) + ',' + a + ')';
+             }
++            function rupiah(n) { return 'Rp ' + Number(n).toLocaleString('id-ID'); }
+ 
+             function build() {
+                 if (chart) chart.destroy();
+-                var text = css('--muted'),
+-                    grid = css('--line');
++                var accent = css('--accent'), text = css('--muted'), grid = css('--line');
+                 chart = new Chart(canvas.getContext('2d'), {
+-                    type: 'bar',
++                    type: 'line',
+                     data: {
+                         labels: data.labels,
+                         datasets: [{
+                             label: 'Pemasukan',
+                             data: data.values,
+-                            backgroundColor: css('--accent'),
+-                            borderRadius: 6
++                            borderColor: accent,
++                            backgroundColor: rgba(accent, 0.18),
++                            borderWidth: 3,
++                            lineTension: 0.35,
++                            fill: true,
++                            pointRadius: 5,
++                            pointHoverRadius: 7,
++                            pointBackgroundColor: accent,
++                            pointBorderColor: css('--bg'),
++                            pointBorderWidth: 2
+                         }]
+                     },
+                     options: {
+                         responsive: true,
+                         maintainAspectRatio: false,
+-                        legend: {
+-                            display: false
+-                        },
++                        legend: { display: false },
++                        layout: { padding: { top: 8, right: 8 } },
+                         tooltips: {
++                            displayColors: false,
+                             callbacks: {
+-                                label: function(t) {
+-                                    return rupiah(t.yLabel);
+-                                }
++                                label: function(t) { return rupiah(t.yLabel); },
++                                afterLabel: function(t) { return data.kelas[t.index] + ' dari ' + data.total + ' kelas setor'; }
+                             }
+                         },
+                         scales: {
+@@ -186,22 +211,12 @@
+                                 ticks: {
+                                     beginAtZero: true,
+                                     fontColor: text,
+-                                    callback: function(v) {
+-                                        return v >= 1000 ? (v / 1000) + 'rb' : v;
+-                                    }
++                                    maxTicksLimit: 6,
++                                    callback: function(v) { return v >= 1000 ? (v / 1000) + 'rb' : v; }
+                                 },
+-                                gridLines: {
+-                                    color: grid
+-                                }
++                                gridLines: { color: grid, zeroLineColor: grid }
+                             }],
+-                            xAxes: [{
+-                                ticks: {
+-                                    fontColor: text
+-                                },
+-                                gridLines: {
+-                                    display: false
+-                                }
+-                            }]
++                            xAxes: [{ ticks: { fontColor: text }, gridLines: { display: false } }]
+                         }
+                     }
+                 });
+diff --git a/public/assets/css/neo.css b/public/assets/css/neo.css
+index a414f4f..eba20ce 100644
+--- a/public/assets/css/neo.css
++++ b/public/assets/css/neo.css
+@@ -315,17 +315,10 @@ body.neo{font-size:16px}
+ .pub-hero{text-align:center;padding:var(--s6) 0 var(--s5)}
+ .pub-hero h1{margin:var(--s3) 0 var(--s2);font-size:clamp(1.7rem,1.2rem + 2.2vw,2.6rem);font-weight:800;letter-spacing:-.02em}
+ .pub-hero p{margin:0;color:var(--muted);font-size:1.05rem}
+-.grid-2{display:grid;grid-template-columns:2fr 1fr;gap:var(--s5);align-items:start}
+-.grid-2>*{min-width:0}
+-.chart-box{position:relative;height:300px}
+-.meter-list{list-style:none;margin:0;padding:0;display:grid;gap:var(--s4)}
+-.meter-row{display:grid;grid-template-columns:auto 1fr;gap:var(--s3);align-items:center}
+-.meter-row .rank{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;font-size:.85rem;font-weight:800;box-shadow:var(--inset)}
+-.meter-row .top{display:flex;justify-content:space-between;gap:var(--s2);font-weight:600;margin-bottom:6px}
+-.meter-row .top span:last-child{color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
++.chart-box{position:relative;height:320px}
+ .meter{height:12px;border-radius:999px;box-shadow:var(--inset);overflow:hidden}
+ .meter>span{display:block;height:100%;border-radius:999px;background:var(--accent)}
+-@media (max-width:900px){.grid-2{grid-template-columns:1fr}.chart-box{height:260px}}
++@media (max-width:640px){.chart-box{height:240px}}
+ 
+ /* ===== Responsif (menimpa skala jarak di layar kecil) ===== */
+ @media (max-width:640px){
+@@ -343,3 +336,20 @@ body.neo{font-size:16px}
+   :root,:root[data-theme="dark"]{--bg:#fff;--text:#000;--muted:#333;--accent:#0f6b52;--on-accent:#000;--ok:#000;--bad:#000;--surface-2:transparent;--surface-solid:#fff;--line:#999}
+   .theme-toggle,.pub-top{display:none!important}
+ }
++
++/* ===== Halaman publik: ringkasan grafik & ubin kelas ===== */
++.mini-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:var(--s4);margin-bottom:var(--s5)}
++.mini{display:flex;flex-direction:column;gap:2px;padding:var(--s4);border-radius:var(--r-sm);box-shadow:var(--inset)}
++.mini-lbl{font-size:.8rem;font-weight:600;color:var(--muted)}
++.mini-val{font-size:1.25rem;font-weight:700;font-variant-numeric:tabular-nums}
++.mini-val small{font-size:.75em;font-weight:600;color:var(--muted)}
++.tile-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:var(--s4)}
++.tile{display:grid;gap:var(--s2);padding:var(--s4);border-radius:var(--r-sm);box-shadow:var(--raised-sm)}
++.tile-head{display:flex;align-items:center;justify-content:space-between;gap:var(--s2)}
++.tile-name{font-size:1.2rem;font-weight:800}
++.tile-amt{font-size:1.05rem;font-weight:700;font-variant-numeric:tabular-nums}
++.tile .hint{margin:0}
++.meter{height:10px;border-radius:999px;box-shadow:var(--inset);overflow:hidden}
++.meter>span{display:block;height:100%;border-radius:999px;background:var(--accent)}
++.neo .table-matrik th,.neo .table-matrik td{padding:.6rem .4rem}
++.neo .table-matrik td:first-child,.neo .table-matrik th:first-child{padding-left:.7rem;padding-right:.7rem}

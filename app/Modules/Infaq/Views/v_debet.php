@@ -1,83 +1,64 @@
-<?= $this->extend('\Modules\Infaq\Views\layout\v_wrapper') ?>
+<?= $this->extend('\\Modules\\Infaq\\Views\\layout\\v_wrapper') ?>
 
 <?= $this->section('content') ?>
-<div class="content-header">
-    <div class="container-fluid">
-        <div class="row mb-2">
-            <div class="col-sm-6">
-                <h1 class="m-0"><i class="fas fa-edit mr-2"></i><?= $title ?></h1>
+<h1 class="page-title"><?= esc($title) ?></h1>
+<p class="page-sub">Isi nominal setiap kelas, lalu simpan sekaligus.</p>
+
+<form action="<?= base_url('admin/debet/save') ?>" method="post" class="card">
+    <?= csrf_field() ?>
+    <div class="card-body">
+        <div class="toolbar">
+            <div class="form-group">
+                <label for="tanggal">Tanggal transaksi</label>
+                <input type="date" id="tanggal" name="tanggal" class="form-control form-control-lg" value="<?= esc($tanggal_hari_ini, 'attr') ?>" required>
+                <div class="hint">Jika tanggal yang sama diinput ulang, data lama diperbarui.</div>
             </div>
+            <button type="submit" class="btn btn-primary btn-lg"><i class="fas fa-save"></i> Simpan semua data</button>
         </div>
     </div>
-</div>
-
-<section class="content">
-    <div class="container-fluid">
-        <form action="<?= base_url('admin/debet/save') ?>" method="post">
-            <?= csrf_field() ?>
-            <div class="card card-primary card-outline">
-                <div class="card-header">
-                    <div class="row align-items-center">
-                        <div class="col-md-4">
-                            <div class="form-group mb-0">
-                                <label>Pilih Tanggal Transaksi :</label>
-                                <input type="date" name="tanggal" class="form-control form-control-lg" value="<?= $tanggal_hari_ini ?>" required>
-                                <small class="text-muted">Jika tanggal sama diinput ulang, data lama akan otomatis diperbarui.</small>
-                            </div>
-                        </div>
-                        <div class="col-md-8 text-right">
-                            <button type="submit" class="btn btn-success btn-lg">
-                                <i class="fas fa-save mr-2"></i> SIMPAN SEMUA DATA
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                <div class="card-body p-0">
-                    <table class="table table-hover table-head-fixed text-nowrap">
-                        <thead class="bg-light">
-                            <tr>
-                                <th style="width: 50px" class="text-center">#</th>
-                                <th>Nama Kelas / Kelompok</th>
-                                <th style="width: 350px">Nominal Infaq (Rp)</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php $no = 1;
-                            foreach ($kelas as $k) : ?>
-                                <tr>
-                                    <td class="text-center"><?= $no++ ?></td>
-                                    <td><strong><?= esc($k['nama_kelas']) ?></strong></td>
-                                    <td>
-                                        <div class="input-group">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text"><b>Rp</b></span>
-                                            </div>
-                                            <input type="number" name="nominal[<?= $k['id_kelas'] ?>]"
-                                                class="form-control form-control-lg"
-                                                placeholder="0" min="0"
-                                                value="<?= $values[$k['id_kelas']] ?? '' ?>">
-                                        </div>
-                                    </td>
-                                </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
-                </div>
-                <div class="card-footer">
-                    <div class="alert alert-info mb-0">
-                        <i class="fas fa-info-circle mr-2"></i>
-                        Pastikan semua nominal sudah benar sebelum menekan tombol simpan.
-                        Untuk melihat histori, silakan buka menu <b>Laporan</b>.
-                    </div>
-                </div>
-            </div>
-        </form>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th class="text-center" style="width:56px">#</th>
+                        <th>Kelas</th>
+                        <th style="width:min(340px,50%)">Nominal infaq</th>
+                        <th class="text-center">Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php $no = 1;
+                    foreach ($kelas as $k) : ?>
+                        <tr>
+                            <td class="text-center"><?= $no++ ?></td>
+                            <td class="fw-b"><?= esc($k['nama_kelas']) ?></td>
+                            <td>
+                                <div class="money">
+                                    <b>Rp</b>
+                                    <input type="number" name="nominal[<?= (int) $k['id_kelas'] ?>]" inputmode="numeric" placeholder="0" min="0"
+                                        aria-label="Nominal kelas <?= esc($k['nama_kelas'], 'attr') ?>"
+                                        value="<?= esc($values[$k['id_kelas']] ?? '', 'attr') ?>">
+                                </div>
+                            </td>
+                            <td class="text-center nowrap">
+                                <?php if (isset($values[$k['id_kelas']])) : ?><span class="badge badge-ok">Tersimpan</span><?php else : ?><span class="badge badge-muted">Belum diisi</span><?php endif; ?>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
     </div>
-</section>
+    <div class="card-footer">
+        <div class="alert alert-success mb-0">Pastikan semua nominal sudah benar sebelum menyimpan. Riwayat dapat dilihat di menu Laporan.</div>
+    </div>
+</form>
+
 <script>
-    // Script agar saat tanggal diganti, halaman otomatis reload ke tanggal tersebut
-    document.querySelector('input[name="tanggal"]').addEventListener('change', function() {
-        window.location.href = "<?= base_url('admin/debet') ?>?tanggal=" + this.value;
+    // Saat tanggal diganti, muat ulang halaman ke tanggal tersebut
+    document.getElementById('tanggal').addEventListener('change', function() {
+        window.location.href = "<?= base_url('admin/debet') ?>?tanggal=" + encodeURIComponent(this.value);
     });
 </script>
 <?= $this->endSection() ?>

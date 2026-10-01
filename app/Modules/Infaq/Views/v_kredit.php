@@ -1,81 +1,61 @@
-<?= $this->extend('\Modules\Infaq\Views\layout\v_wrapper') ?>
+<?= $this->extend('\\Modules\\Infaq\\Views\\layout\\v_wrapper') ?>
 
 <?= $this->section('content') ?>
-<div class="content-header">
-    <div class="container-fluid">
-        <h1 class="m-0"><?= $title ?></h1>
-    </div>
-</div>
+<h1 class="page-title"><?= esc($title) ?></h1>
+<p class="page-sub">Catat dan kelola pengeluaran dana sedekah.</p>
 
-<section class="content">
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-md-4">
-                <div class="card card-danger">
-                    <div class="card-header">
-                        <h3 class="card-title">Tambah Pengeluaran</h3>
-                    </div>
-                    <form action="<?= base_url('admin/kredit/save') ?>" method="post">
-                        <?= csrf_field() ?>
-                        <div class="card-body">
-                            <div class="form-group">
-                                <label>Tanggal</label>
-                                <input type="date" name="tanggal" class="form-control" value="<?= $tanggal_hari_ini ?>" required>
-                            </div>
-                            <div class="form-group">
-                                <label>Nominal (Rp)</label>
-                                <input type="number" name="nominal" class="form-control" placeholder="0" required>
-                            </div>
-                            <div class="form-group">
-                                <label>Keterangan</label>
-                                <textarea name="keterangan" class="form-control" rows="3" required></textarea>
-                            </div>
-                        </div>
-                        <div class="card-footer">
-                            <button type="submit" class="btn btn-danger btn-block">Simpan Pengeluaran</button>
-                        </div>
-                    </form>
-                </div>
+<div class="split">
+    <form action="<?= base_url('admin/kredit/save') ?>" method="post" class="card">
+        <?= csrf_field() ?>
+        <div class="card-header"><h2 class="card-title">Tambah pengeluaran</h2></div>
+        <div class="card-body">
+            <div class="form-group">
+                <label for="k-tgl">Tanggal</label>
+                <input type="date" id="k-tgl" name="tanggal" class="form-control" value="<?= esc($tanggal_hari_ini, 'attr') ?>" required>
             </div>
+            <div class="form-group">
+                <label for="k-nom">Nominal (Rp)</label>
+                <div class="money"><b>Rp</b><input type="number" id="k-nom" name="nominal" inputmode="numeric" min="1" placeholder="0" required></div>
+            </div>
+            <div class="form-group mb-0">
+                <label for="k-ket">Keterangan</label>
+                <textarea id="k-ket" name="keterangan" class="form-control" rows="3" maxlength="500" required></textarea>
+            </div>
+        </div>
+        <div class="card-footer"><button type="submit" class="btn btn-primary btn-block">Simpan pengeluaran</button></div>
+    </form>
 
-            <div class="col-md-8">
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">Histori Pengeluaran</h3>
-                    </div>
-                    <div class="card-body p-0">
-                        <table class="table table-striped">
-                            <thead>
-                                <tr>
-                                    <th>Tanggal</th>
-                                    <th>Keterangan</th>
-                                    <th class="text-right">Nominal</th>
-                                    <th class="text-center">Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php foreach ($list as $l) : ?>
-                                    <tr>
-                                        <td><?= date('d-m-Y', strtotime($l['tanggal'])) ?></td>
-                                        <td><?= esc($l['keterangan']) ?></td>
-                                        <td class="text-right text-danger">Rp <?= number_format($l['nominal'], 0, ',', '.') ?></td>
-                                        <td class="text-center">
-                                            <form action="<?= base_url('admin/kredit/delete/' . $l['id_kredit']) ?>" method="post" class="d-inline"
-                                                onsubmit="return confirm('Apakah Anda yakin ingin menghapus data ini?')">
-                                                <?= csrf_field() ?>
-                                                <button type="submit" class="btn btn-sm btn-outline-danger">
-                                                    <i class="fas fa-trash"></i> Hapus
-                                                </button>
-                                            </form>
-                                        </td>
-                                    </tr>
-                                <?php endforeach; ?>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+    <div class="card">
+        <div class="card-header"><h2 class="card-title">Histori pengeluaran</h2><span class="hint">10 transaksi terakhir</span></div>
+        <div class="card-body">
+            <div class="table-responsive stack-wrap">
+                <table class="table table-stack">
+                    <thead>
+                        <tr>
+                            <th>Tanggal</th>
+                            <th>Keterangan</th>
+                            <th class="text-right">Nominal</th>
+                            <th class="text-center">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($list as $l) : ?>
+                            <tr>
+                                <td class="nowrap" data-label="Tanggal"><?= date('d-m-Y', strtotime($l['tanggal'])) ?></td>
+                                <td data-label="Keterangan"><?= esc($l['keterangan']) ?></td>
+                                <td class="text-right num-out nowrap" data-label="Nominal">Rp <?= number_format($l['nominal'], 0, ',', '.') ?></td>
+                                <td class="text-center" data-label="Aksi">
+                                    <form action="<?= base_url('admin/kredit/delete/' . (int) $l['id_kredit']) ?>" method="post" data-confirm="Hapus data pengeluaran ini?">
+                                        <?= csrf_field() ?>
+                                        <button type="submit" class="btn btn-sm btn-danger" aria-label="Hapus"><i class="fas fa-trash"></i></button>
+                                    </form>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
-</section>
+</div>
 <?= $this->endSection() ?>

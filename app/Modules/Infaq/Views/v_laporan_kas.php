@@ -1,63 +1,52 @@
-<?= $this->extend('\Modules\Infaq\Views\layout\v_wrapper') ?>
+<?= $this->extend('\\Modules\\Infaq\\Views\\layout\\v_wrapper') ?>
 <?= $this->section('content') ?>
+<h1 class="page-title no-print"><?= esc($title) ?></h1>
 
-<div class="card card-outline card-primary">
-    <div class="card-header">
-        <h3 class="card-title">Filter Laporan Kas</h3>
+<form action="" method="get" class="card no-print">
+    <div class="card-body toolbar">
+        <div class="toolbar-actions">
+            <div class="form-group"><label for="tgl_awal">Dari tanggal</label><input type="date" id="tgl_awal" name="tgl_awal" class="form-control" value="<?= esc($tgl_awal, 'attr') ?>"></div>
+            <div class="form-group"><label for="tgl_akhir">Sampai tanggal</label><input type="date" id="tgl_akhir" name="tgl_akhir" class="form-control" value="<?= esc($tgl_akhir, 'attr') ?>"></div>
+        </div>
+        <div class="toolbar-actions">
+            <button type="submit" class="btn btn-primary"><i class="fas fa-search"></i> Tampilkan</button>
+            <a href="<?= base_url('admin/laporan/cetak_pdf?' . http_build_query(['tgl_awal' => $tgl_awal, 'tgl_akhir' => $tgl_akhir])) ?>" target="_blank" rel="noopener" class="btn"><i class="fas fa-file-pdf"></i> Unduh PDF</a>
+        </div>
     </div>
-    <form action="" method="get" class="form-inline">
-        <div class="form-group mr-2">
-            <label class="mr-2">Dari :</label>
-            <input type="date" name="tgl_awal" class="form-control" value="<?= $tgl_awal ?>">
-        </div>
-        <div class="form-group mr-2">
-            <label class="mr-2">Sampai :</label>
-            <input type="date" name="tgl_akhir" class="form-control" value="<?= $tgl_akhir ?>">
-        </div>
+</form>
 
-        <button type="submit" class="btn btn-primary"><i class="fas fa-search"></i> Tampilkan</button>
-
-        <a href="<?= base_url('admin/laporan/cetak_pdf?tgl_awal=' . $tgl_awal . '&tgl_akhir=' . $tgl_akhir) ?>" target="_blank" class="btn btn-danger ml-2">
-            <i class="fas fa-file-pdf"></i> Download PDF
-        </a>
-    </form>
-</div>
-
-<div class="card shadow-none border-0" id="print-area">
+<section class="card">
     <div class="card-body">
-
-        <div class="text-center mb-4">
-            <h2 class="font-weight-bold">BUKU KAS UMUM SEDEKAH SUBUH</h2>
-            <h3 class="font-weight-bold">MIN 6 JEMBER</h3>
+        <div class="report-title">
+            <h2>Buku Kas Umum Sedekah Subuh</h2>
+            <h2>MIN 6 Jember</h2>
             <p>Periode: <?= date('d/m/Y', strtotime($tgl_awal)) ?> s/d <?= date('d/m/Y', strtotime($tgl_akhir)) ?></p>
         </div>
 
         <div class="table-responsive">
-            <table class="table table-bordered table-sm custom-table">
-                <thead>
-                    <tr class="text-center bg-light">
-                        <th style="width: 5%;">NO</th>
-                        <th style="width: 12%;">TANGGAL</th>
-                        <th style="width: 44%;">URAIAN</th>
-                        <th style="width: 13%;">PEMASUKAN</th>
-                        <th style="width: 13%;">PENGELUARAN</th>
-                        <th style="width: 13%;">SALDO</th>
+            <table class="table table-bordered table-wide">
+                <thead class="thead-accent">
+                    <tr>
+                        <th class="text-center" style="width:5%">No</th>
+                        <th class="text-center" style="width:13%">Tanggal</th>
+                        <th>Uraian</th>
+                        <th class="text-center" style="width:14%">Pemasukan</th>
+                        <th class="text-center" style="width:14%">Pengeluaran</th>
+                        <th class="text-center" style="width:14%">Saldo</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr class="font-weight-bold bg-light">
-                        <td colspan="3" class="text-center">SALDO AWAL PERIODE</td>
+                    <tr class="row-total">
+                        <td colspan="3" class="text-center">Saldo awal periode</td>
                         <td class="text-right">-</td>
                         <td class="text-right">-</td>
-                        <td class="text-right">Rp <?= number_format($saldo_awal, 0, ',', '.') ?></td>
+                        <td class="text-right nowrap">Rp <?= number_format($saldo_awal, 0, ',', '.') ?></td>
                     </tr>
-
                     <?php
                     $no = 1;
                     $saldo = $saldo_awal;
                     $total_masuk = 0;
                     $total_keluar = 0;
-
                     foreach ($list as $row) :
                         $saldo += ($row['masuk'] - $row['keluar']);
                         $total_masuk += $row['masuk'];
@@ -65,114 +54,30 @@
                     ?>
                         <tr>
                             <td class="text-center"><?= $no++ ?></td>
-                            <td class="text-center"><?= date('d-m-Y', strtotime($row['tanggal'])) ?></td>
-                            <td class="text-wrap"><?= $row['uraian'] ?></td>
-                            <td class="text-right"><?= $row['masuk'] > 0 ? 'Rp ' . number_format($row['masuk'], 0, ',', '.') : '-' ?></td>
-                            <td class="text-right"><?= $row['keluar'] > 0 ? 'Rp ' . number_format($row['keluar'], 0, ',', '.') : '-' ?></td>
-                            <td class="text-right font-weight-bold">Rp <?= number_format($saldo, 0, ',', '.') ?></td>
+                            <td class="text-center nowrap"><?= date('d-m-Y', strtotime($row['tanggal'])) ?></td>
+                            <td><?php if ($row['masuk'] > 0) : ?><span class="badge badge-ok">Masuk</span><?php else : ?><span class="badge badge-bad">Keluar</span><?php endif; ?> <?= esc($row['uraian']) ?></td>
+                            <td class="text-right nowrap <?= $row['masuk'] > 0 ? 'num-in' : '' ?>"><?= $row['masuk'] > 0 ? 'Rp ' . number_format($row['masuk'], 0, ',', '.') : '-' ?></td>
+                            <td class="text-right nowrap <?= $row['keluar'] > 0 ? 'num-out' : '' ?>"><?= $row['keluar'] > 0 ? 'Rp ' . number_format($row['keluar'], 0, ',', '.') : '-' ?></td>
+                            <td class="text-right nowrap fw-b">Rp <?= number_format($saldo, 0, ',', '.') ?></td>
                         </tr>
                     <?php endforeach; ?>
                 </tbody>
-
                 <tfoot>
-                    <tr class="bg-gray font-weight-bold" style="background-color: #e9ecef !important;">
-                        <td colspan="3" class="text-center text-uppercase">Total Mutasi & Saldo Akhir</td>
-                        <td class="text-right">Rp <?= number_format($total_masuk, 0, ',', '.') ?></td>
-                        <td class="text-right">Rp <?= number_format($total_keluar, 0, ',', '.') ?></td>
-                        <td class="text-right" style="background-color: #ddd !important;">Rp <?= number_format($saldo, 0, ',', '.') ?></td>
+                    <tr class="row-total">
+                        <td colspan="3" class="text-center">Total mutasi &amp; saldo akhir</td>
+                        <td class="text-right nowrap">Rp <?= number_format($total_masuk, 0, ',', '.') ?></td>
+                        <td class="text-right nowrap">Rp <?= number_format($total_keluar, 0, ',', '.') ?></td>
+                        <td class="text-right nowrap">Rp <?= number_format($saldo, 0, ',', '.') ?></td>
                     </tr>
                 </tfoot>
             </table>
         </div>
 
-        <div class="row mt-5 avoid-break">
-            <div class="col-4 text-center">
-                <p>Ketua Komite,</p>
-                <br><br><br>
-                <p class="font-weight-bold underline"><?= esc($config['nm_kakomite'] ?? '.........................') ?></p>
-            </div>
-            <div class="col-4 text-center">
-                <p>Bendahara Komite,</p>
-                <br><br><br>
-                <p class="font-weight-bold underline"><?= $config['nm_bdrkomite'] ?? '.........................' ?></p>
-            </div>
-            <div class="col-4 text-center">
-                <p>Jember, <?= isset($config['tgl_lap']) ? date('d-m-Y', strtotime($config['tgl_lap'])) : date('d-m-Y') ?></p>
-                <p>Kepala Madrasah,</p>
-                <br><br><br>
-                <p class="font-weight-bold underline"><?= esc($config['kpl_sek'] ?? '.........................') ?></p>
-            </div>
+        <div class="sign avoid-break">
+            <div>Ketua Komite,<div class="space"></div><b><?= esc($config['nm_kakomite'] ?? '.........................') ?></b></div>
+            <div>Bendahara Komite,<div class="space"></div><b><?= esc($config['nm_bdrkomite'] ?? '.........................') ?></b></div>
+            <div>Jember, <?= isset($config['tgl_lap']) ? date('d-m-Y', strtotime($config['tgl_lap'])) : date('d-m-Y') ?><br>Kepala Madrasah,<div class="space"></div><b><?= esc($config['kpl_sek'] ?? '.........................') ?></b></div>
         </div>
     </div>
-</div>
-
-<style>
-    /* Styling Normal (Layar) */
-    .text-wrap {
-        white-space: normal !important;
-        word-wrap: break-word;
-    }
-
-    /* Styling Saat Print */
-    @media print {
-
-        /* Sembunyikan elemen non-cetak */
-        .btn,
-        .card-header,
-        form,
-        .main-footer,
-        .navbar,
-        .main-sidebar {
-            display: none !important;
-        }
-
-        .content-wrapper,
-        .card {
-            background: white !important;
-            margin: 0 !important;
-            padding: 0 !important;
-            border: none !important;
-            box-shadow: none !important;
-        }
-
-        /* Paksa Background Color keluar saat print (untuk header & footer tabel) */
-        .bg-light,
-        .bg-gray {
-            background-color: #f4f6f9 !important;
-            -webkit-print-color-adjust: exact;
-            print-color-adjust: exact;
-        }
-
-        /* Ukuran Font Tabel */
-        .table {
-            font-size: 11pt !important;
-            width: 100% !important;
-        }
-
-        .table td,
-        .table th {
-            padding: 4px !important;
-            vertical-align: middle !important;
-        }
-
-        /* Lebar Kolom Spesifik (Override Bootstrap) */
-        .table th:nth-child(2),
-        .table td:nth-child(2) {
-            width: 12% !important;
-        }
-
-        /* Tanggal */
-        .table th:nth-child(3),
-        .table td:nth-child(3) {
-            width: 44% !important;
-        }
-
-        /* Uraian */
-
-        /* Hindari pemotongan baris tanda tangan */
-        .avoid-break {
-            page-break-inside: avoid;
-        }
-    }
-</style>
+</section>
 <?= $this->endSection() ?>
