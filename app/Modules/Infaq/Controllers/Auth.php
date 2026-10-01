@@ -19,24 +19,32 @@ class Auth extends BaseController
 
     public function loginAction()
     {
-        $db = \Config\Database::connect();
-        $username = trim($this->request->getPost('username'));
-        $password = $this->request->getPost('password');
+        // Batasi percobaan login: maks 5x per menit per IP
+        $throttler = service('throttler');
+        if ($throttler->check('login_' . md5($this->request->getIPAddress()), 5, MINUTE) === false) {
+            return redirect()->back()->with('error', 'Terlalu banyak percobaan. Coba lagi sebentar lagi.');
+        }
+
+        $db       = \Config\Database::connect();
+        $username = trim((string) $this->request->getPost('username'));
+        $password = (string) $this->request->getPost('password');
 
         $user = $db->table('users')->where('username', $username)->get()->getRowArray();
 
         if ($user && password_verify($password, $user['password'])) {
-            // Set session tanpa mempedulikan role
+            session()->regenerate(true); // cegah session fixation
             session()->set([
                 'id_user'   => $user['id_user'],
                 'username'  => $user['username'],
-                'logged_in' => true
+                'role'      => $user['role'],
+                'logged_in' => true,
             ]);
             return redirect()->to(base_url('admin'));
         }
 
         return redirect()->back()->with('error', 'Login Gagal! Periksa kembali akun Anda.');
     }
+
     public function logout()
     {
         session()->destroy();

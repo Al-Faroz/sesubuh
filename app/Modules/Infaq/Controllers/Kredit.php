@@ -27,14 +27,23 @@ class Kredit extends BaseController
 
     public function save()
     {
-        $data = [
-            'tanggal'    => $this->request->getPost('tanggal'),
-            'nominal'    => $this->request->getPost('nominal'),
-            'keterangan' => $this->request->getPost('keterangan'),
-            'created_by' => session()->get('id_user') ?? 1
+        $rules = [
+            'tanggal'    => 'required|valid_date[Y-m-d]',
+            'nominal'    => 'required|decimal|greater_than[0]',
+            'keterangan' => 'required|max_length[500]',
         ];
 
-        $this->kreditModel->insert($data);
+        if (! $this->validate($rules)) {
+            return redirect()->to(base_url('admin/kredit'))->with('error', implode(' ', $this->validator->getErrors()));
+        }
+
+        $this->kreditModel->insert([
+            'tanggal'    => $this->request->getPost('tanggal'),
+            'nominal'    => $this->request->getPost('nominal'),
+            'keterangan' => trim($this->request->getPost('keterangan')),
+            'created_by' => session()->get('id_user'),
+        ]);
+
         return redirect()->to(base_url('admin/kredit'))->with('success', 'Pengeluaran berhasil dicatat.');
     }
 

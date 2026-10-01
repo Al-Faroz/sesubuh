@@ -54,7 +54,7 @@
 
         <div class="alert alert-success alert-dismissible">
             <h5><i class="icon fas fa-check"></i> Berhasil Masuk!</h5>
-            Selamat Datang, <b><?= session()->get('username') ?? 'admin' ?></b>. Sistem Sedekah Subuh siap dikelola.
+            Selamat Datang, <b><?= esc(session()->get('username') ?? 'admin') ?></b>. Sistem Sedekah Subuh siap dikelola.
         </div>
 
     </div>

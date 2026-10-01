@@ -18,11 +18,11 @@
 
                     <div class="form-group">
                         <label>Ketua Komite</label>
-                        <input type="text" name="nm_kakomite" class="form-control" value="<?= $config['nm_kakomite'] ?? '' ?>" required>
+                        <input type="text" name="nm_kakomite" class="form-control" value="<?= esc($config['nm_kakomite'] ?? '', 'attr') ?>" required>
                     </div>
                     <div class="form-group">
                         <label>Kepala Madrasah</label>
-                        <input type="text" name="kpl_sek" class="form-control" value="<?= $config['kpl_sek'] ?? '' ?>" required>
+                        <input type="text" name="kpl_sek" class="form-control" value="<?= esc($config['kpl_sek'] ?? '', 'attr') ?>" required>
                     </div>
                     <div class="form-group">
                         <label>Bendahara Komite</label>

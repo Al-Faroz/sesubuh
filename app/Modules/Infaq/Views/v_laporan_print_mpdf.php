@@ -184,7 +184,7 @@ $tgl_tanda_tangan = isset($config['tgl_lap']) && !empty($config['tgl_lap'])
             <td>
                 <p>Ketua Komite,</p>
                 <br><br><br><br>
-                <p class="font-bold" style="text-decoration: underline;"><?= $config['nm_kakomite'] ?? '.........................' ?></p>
+                <p class="font-bold" style="text-decoration: underline;"><?= esc($config['nm_kakomite'] ?? '.........................') ?></p>
             </td>
 
             <td>

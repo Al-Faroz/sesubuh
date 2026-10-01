@@ -23,12 +23,14 @@
                 foreach ($users as $u) : ?>
                     <tr>
                         <td class="text-center"><?= $no++ ?></td>
-                        <td><?= $u['nama_user'] ?></td>
-                        <td class="text-center font-weight-bold"><?= $u['username'] ?></td>
+                        <td><?= esc($u['nama_user']) ?></td>
+                        <td class="text-center font-weight-bold"><?= esc($u['username']) ?> <small class="text-muted">(<?= esc($u['role']) ?>)</small></td>
                         <td class="text-center">
-                            <a href="<?= base_url('admin/user/hapus/' . $u['id_user']) ?>"
-                                onclick="return confirm('Hapus admin <?= $u['nama_user'] ?>?')"
-                                class="btn btn-danger btn-xs"><i class="fas fa-trash"></i></a>
+                            <form action="<?= base_url('admin/user/hapus/' . $u['id_user']) ?>" method="post" class="d-inline"
+                                onsubmit="return confirm('Hapus akun ini?')">
+                                <?= csrf_field() ?>
+                                <button type="submit" class="btn btn-danger btn-xs"><i class="fas fa-trash"></i></button>
+                            </form>
                         </td>
                     </tr>
                 <?php endforeach; ?>
@@ -45,6 +47,7 @@
                 <button type="button" class="close text-white" data-dismiss="modal"><span>&times;</span></button>
             </div>
             <form action="<?= base_url('admin/user/simpan') ?>" method="post">
+                <?= csrf_field() ?>
                 <div class="modal-body">
                     <div class="form-group">
                         <label>Nama Lengkap</label>
@@ -53,6 +56,13 @@
                     <div class="form-group">
                         <label>Username</label>
                         <input type="text" name="username" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Role</label>
+                        <select name="role" class="form-control" required>
+                            <option value="operator">Operator (input data & laporan)</option>
+                            <option value="admin">Admin (termasuk kelola akun)</option>
+                        </select>
                     </div>
                     <div class="form-group">
                         <label>Password</label>

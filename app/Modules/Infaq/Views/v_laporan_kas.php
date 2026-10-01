@@ -89,7 +89,7 @@
             <div class="col-4 text-center">
                 <p>Ketua Komite,</p>
                 <br><br><br>
-                <p class="font-weight-bold underline"><?= $config['nm_kakomite'] ?? '.........................' ?></p>
+                <p class="font-weight-bold underline"><?= esc($config['nm_kakomite'] ?? '.........................') ?></p>
             </div>
             <div class="col-4 text-center">
                 <p>Bendahara Komite,</p>
@@ -100,7 +100,7 @@
                 <p>Jember, <?= isset($config['tgl_lap']) ? date('d-m-Y', strtotime($config['tgl_lap'])) : date('d-m-Y') ?></p>
                 <p>Kepala Madrasah,</p>
                 <br><br><br>
-                <p class="font-weight-bold underline"><?= $config['kpl_sek'] ?? '.........................' ?></p>
+                <p class="font-weight-bold underline"><?= esc($config['kpl_sek'] ?? '.........................') ?></p>
             </div>
         </div>
     </div>

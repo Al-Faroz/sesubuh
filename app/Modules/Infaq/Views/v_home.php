@@ -88,7 +88,7 @@
                         <thead class="bg-navy text-white">
                             <tr>
                                 <th>Tgl</th>
-                                <?php foreach ($kelas as $k) : ?><th><?= $k['nama_kelas'] ?></th><?php endforeach; ?>
+                                <?php foreach ($kelas as $k) : ?><th><?= esc($k['nama_kelas']) ?></th><?php endforeach; ?>
                                 <th class="bg-warning text-dark">JUMLAH</th>
                             </tr>
                         </thead>

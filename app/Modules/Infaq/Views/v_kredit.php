@@ -61,14 +61,16 @@
                                 <?php foreach ($list as $l) : ?>
                                     <tr>
                                         <td><?= date('d-m-Y', strtotime($l['tanggal'])) ?></td>
-                                        <td><?= $l['keterangan'] ?></td>
+                                        <td><?= esc($l['keterangan']) ?></td>
                                         <td class="text-right text-danger">Rp <?= number_format($l['nominal'], 0, ',', '.') ?></td>
                                         <td class="text-center">
-                                            <a href="<?= base_url('admin/kredit/delete/' . $l['id_kredit']) ?>"
-                                                class="btn btn-sm btn-outline-danger"
-                                                onclick="return confirm('Apakah Anda yakin ingin menghapus data ini?')">
-                                                <i class="fas fa-trash"></i> Hapus
-                                            </a>
+                                            <form action="<?= base_url('admin/kredit/delete/' . $l['id_kredit']) ?>" method="post" class="d-inline"
+                                                onsubmit="return confirm('Apakah Anda yakin ingin menghapus data ini?')">
+                                                <?= csrf_field() ?>
+                                                <button type="submit" class="btn btn-sm btn-outline-danger">
+                                                    <i class="fas fa-trash"></i> Hapus
+                                                </button>
+                                            </form>
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>

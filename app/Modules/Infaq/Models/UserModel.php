@@ -12,7 +12,7 @@ class UserModel extends Model
     protected $returnType       = 'array';
 
     // Field yang diizinkan untuk diisi sesuai struktur database terbaru
-    protected $allowedFields    = ['nama_user', 'username', 'password'];
+    protected $allowedFields    = ['nama_user', 'username', 'password', 'role'];
 
     // Fitur timestamp otomatis jika Anda ingin mencatat waktu pembuatan
     protected $useTimestamps = false;

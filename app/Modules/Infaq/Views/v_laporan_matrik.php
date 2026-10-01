@@ -30,7 +30,7 @@
             <tr>
                 <th rowspan="2" style="vertical-align: middle;">Tanggal</th>
                 <?php foreach ($kelas as $k) : ?>
-                    <th style="font-size: 0.8rem;"><?= $k['nama_kelas'] ?></th>
+                    <th style="font-size: 0.8rem;"><?= esc($k['nama_kelas']) ?></th>
                 <?php endforeach; ?>
                 <th rowspan="2" style="vertical-align: middle;" class="bg-warning text-dark">TOTAL</th>
             </tr>
@@ -77,8 +77,8 @@
     </table>
 
     <div class="row mt-5 text-center sign-section">
-        <div class="col-4">Ketua Komite,<br><br><br><br><b class="text-uppercase"><?= $config['nm_kakomite'] ?></b></div>
-        <div class="col-4">Kepala Madrasah,<br><br><br><br><b class="text-uppercase"><?= $config['kpl_sek'] ?></b></div>
+        <div class="col-4">Ketua Komite,<br><br><br><br><b class="text-uppercase"><?= esc($config['nm_kakomite']) ?></b></div>
+        <div class="col-4">Kepala Madrasah,<br><br><br><br><b class="text-uppercase"><?= esc($config['kpl_sek']) ?></b></div>
         <div class="col-4">Jember, <?= date('d-m-Y', strtotime($config['tgl_lap'])) ?><br>Bendahara Komite,<br><br><br><br><b class="text-uppercase"><?= $config['nm_bdrkomite'] ?></b></div>
     </div>
 </div>

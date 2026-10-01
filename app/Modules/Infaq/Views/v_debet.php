@@ -54,7 +54,7 @@
                             foreach ($kelas as $k) : ?>
                                 <tr>
                                     <td class="text-center"><?= $no++ ?></td>
-                                    <td><strong><?= $k['nama_kelas'] ?></strong></td>
+                                    <td><strong><?= esc($k['nama_kelas']) ?></strong></td>
                                     <td>
                                         <div class="input-group">
                                             <div class="input-group-prepend">

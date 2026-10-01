@@ -43,23 +43,33 @@ class Debet extends BaseController
 
     public function save()
     {
-        $tanggal = $this->request->getPost('tanggal');
+        $tanggal = (string) $this->request->getPost('tanggal');
         $nominal = $this->request->getPost('nominal');
-        $userId  = session()->get('id_user') ?? 1;
+        $userId  = session()->get('id_user');
 
-        foreach ($nominal as $id_kelas => $value) {
-            if ($value !== '' && $value >= 0) {
-                $insertData = [
-                    'id_kelas'   => $id_kelas,
-                    'nominal'    => (int)$value,
-                    'tanggal'    => $tanggal,
-                    'created_by' => $userId
-                ];
-                $this->infaqModel->upsertInfaq($insertData);
-            }
+        $dt = \DateTime::createFromFormat('Y-m-d', $tanggal);
+        if (! $dt || $dt->format('Y-m-d') !== $tanggal || ! is_array($nominal)) {
+            return redirect()->to(base_url('admin/debet'))->with('error', 'Tanggal atau data tidak valid.');
         }
 
-        // Redirect kembali ke tanggal yang sama agar data yang baru diinput langsung terlihat
+        // Hanya kelas aktif yang boleh diisi
+        $kelasValid = array_column($this->kelasModel->getAktif(), 'id_kelas');
+
+        foreach ($nominal as $id_kelas => $value) {
+            if (! in_array((int) $id_kelas, array_map('intval', $kelasValid), true)) {
+                continue;
+            }
+            if ($value === '' || ! is_numeric($value) || $value < 0) {
+                continue;
+            }
+            $this->infaqModel->upsertInfaq([
+                'id_kelas'   => (int) $id_kelas,
+                'nominal'    => (int) $value,
+                'tanggal'    => $tanggal,
+                'created_by' => $userId,
+            ]);
+        }
+
         return redirect()->to(base_url('admin/debet?tanggal=' . $tanggal))->with('success', 'Data berhasil diperbarui.');
     }
 }

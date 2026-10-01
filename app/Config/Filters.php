@@ -34,7 +34,8 @@ class Filters extends BaseFilters
         'forcehttps'    => ForceHTTPS::class,
         'pagecache'     => PageCache::class,
         'performance'   => PerformanceMetrics::class,
-        'auth'    => \App\Filters\AuthFilter::class, // <--- TAMBAHKAN INI
+        'auth'    => \App\Filters\AuthFilter::class,
+        'role'    => \App\Filters\RoleFilter::class,
     ];
 
     /**
@@ -73,8 +74,8 @@ class Filters extends BaseFilters
      */
     public array $globals = [
         'before' => [
-            // 'csrf', // Matikan sementara untuk testing jika masih gagal
-            'auth' => ['except' => ['login', 'login/*', '/']], // <--- TAMBAHKAN INI
+            'csrf',
+            'auth' => ['except' => ['login', 'login/*', '/']],
         ],
         'after' => [
             'toolbar',

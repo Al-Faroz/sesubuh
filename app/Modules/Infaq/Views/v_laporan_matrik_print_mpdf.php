@@ -138,7 +138,7 @@ foreach ($transaksi as $t) {
         <thead>
             <tr>
                 <th rowspan="2" style="width: 80px;">TANGGAL</th> <?php foreach ($kelas as $k) : ?>
-                    <th><?= $k['nama_kelas'] ?></th>
+                    <th><?= esc($k['nama_kelas']) ?></th>
                 <?php endforeach; ?>
                 <th rowspan="2" style="width: 80px;">TOTAL</th>
             </tr>
@@ -212,7 +212,7 @@ foreach ($transaksi as $t) {
             <td>
                 <p>Ketua Komite,</p>
                 <br><br><br><br>
-                <p class="font-bold" style="text-decoration: underline;"><?= $config['nm_kakomite'] ?? '.........................' ?></p>
+                <p class="font-bold" style="text-decoration: underline;"><?= esc($config['nm_kakomite'] ?? '.........................') ?></p>
             </td>
             <td>
                 <p>Jember, <?= tanggal_indo($tgl_tanda_tangan) ?></p>
