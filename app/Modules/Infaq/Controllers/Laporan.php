@@ -43,8 +43,6 @@ class Laporan extends BaseController
         $tgl_awal  = $this->request->getGet('tgl_awal') ?? date('Y-m-01');
         $tgl_akhir = $this->request->getGet('tgl_akhir') ?? date('Y-m-d');
 
-        $prev_masuk = $db->query("SELECT SUM(nominal) as total FROM sedekah_masuk WHERE tanggal < ?", [$tgl_awal])->getRow()->total ?? 0;
-        $prev_keluar = $db->query("SELECT SUM(nominal) as total FROM sedekah_keluar WHERE tanggal < ?", [$tgl_awal])->getRow()->total ?? 0;
 
         // Query UNION yang dibungkus Subquery agar tidak DOBEL
         $sql = "SELECT tanggal, uraian, SUM(masuk) as masuk, SUM(keluar) as keluar FROM (
@@ -60,7 +58,7 @@ class Laporan extends BaseController
             'title'      => 'Buku Kas Umum Sedekah Subuh',
             'tgl_awal'   => $tgl_awal,
             'tgl_akhir'  => $tgl_akhir,
-            'saldo_awal' => $prev_masuk - $prev_keluar,
+            'saldo_awal' => (new \Modules\Infaq\Services\FinanceService())->saldoSebelum($tgl_awal),
             'list'       => $db->query($sql, [$tgl_awal, $tgl_akhir])->getResultArray(),
             'config'     => $config
         ];
@@ -82,7 +80,9 @@ class Laporan extends BaseController
             ];
 
             // Pastikan ID 1 ada di database
+            $lama = $db->table('pengaturan')->where('id', 1)->get()->getRowArray();
             $db->table('pengaturan')->where('id', 1)->update($dataUpdate);
+            (new \Modules\Infaq\Services\AuditService())->log('ubah', 'pengaturan', 1, $lama ? array_diff_key($lama, ['id' => 1]) : null, $dataUpdate);
 
             session()->setFlashdata('success', 'Data Berhasil Diupdate!');
             return redirect()->to(base_url('admin/laporan/pengaturan'));
@@ -107,8 +107,6 @@ class Laporan extends BaseController
         $tgl_awal  = $this->request->getGet('tgl_awal') ?? date('Y-m-01');
         $tgl_akhir = $this->request->getGet('tgl_akhir') ?? date('Y-m-d');
 
-        $prev_masuk = $db->query("SELECT SUM(nominal) as total FROM sedekah_masuk WHERE tanggal < ?", [$tgl_awal])->getRow()->total ?? 0;
-        $prev_keluar = $db->query("SELECT SUM(nominal) as total FROM sedekah_keluar WHERE tanggal < ?", [$tgl_awal])->getRow()->total ?? 0;
 
         $sql = "SELECT tanggal, uraian, SUM(masuk) as masuk, SUM(keluar) as keluar FROM (
                 SELECT tanggal, 'Pemasukan Sedekah Subuh Kelas 1-6' as uraian, nominal as masuk, 0 as keluar FROM sedekah_masuk
@@ -122,7 +120,7 @@ class Laporan extends BaseController
         $data = [
             'tgl_awal'   => $tgl_awal,
             'tgl_akhir'  => $tgl_akhir,
-            'saldo_awal' => $prev_masuk - $prev_keluar,
+            'saldo_awal' => (new \Modules\Infaq\Services\FinanceService())->saldoSebelum($tgl_awal),
             'list'       => $db->query($sql, [$tgl_awal, $tgl_akhir])->getResultArray(),
             'config'     => $config
         ];

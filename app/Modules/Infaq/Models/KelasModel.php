@@ -10,7 +10,7 @@ class KelasModel extends Model
     protected $primaryKey       = 'id_kelas';
     protected $useAutoIncrement = true;
     protected $returnType       = 'array';
-    protected $allowedFields    = ['nama_kelas', 'status']; // Kolom yang boleh dimanipulasi
+    protected $allowedFields    = ['nama_kelas', 'jml_anak', 'status']; // Kolom yang boleh dimanipulasi
 
     /**
      * Mengambil daftar kelas yang berstatus aktif untuk form input harian

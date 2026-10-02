@@ -130,3 +130,6 @@ _modules/*
 #-------------------------
 *.sql
 *.zip
+
+# Skrip migrasi (tanpa data) boleh masuk repo
+!database/migrasi_*.sql

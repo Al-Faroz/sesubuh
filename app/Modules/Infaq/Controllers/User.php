@@ -4,6 +4,7 @@ namespace Modules\Infaq\Controllers;
 
 use App\Controllers\BaseController;
 use Modules\Infaq\Models\UserModel;
+use Modules\Infaq\Services\AuditService;
 
 class User extends BaseController
 {
@@ -16,12 +17,10 @@ class User extends BaseController
 
     public function index()
     {
-        $data = [
+        return view('\Modules\Infaq\Views\v_user_index', [
             'title' => 'Manajemen Admin',
-            'users' => $this->userModel->findAll()
-        ];
-        // Menghapus 'user\' dari path pemanggilan
-        return view('\Modules\Infaq\Views\v_user_index', $data);
+            'users' => $this->userModel->findAll(),
+        ]);
     }
 
     public function simpan()
@@ -37,11 +36,15 @@ class User extends BaseController
             return redirect()->to(base_url('admin/user'))->with('error', implode(' ', $this->validator->getErrors()));
         }
 
-        $this->userModel->insert([
+        $id = $this->userModel->insert([
             'nama_user' => $this->request->getPost('nama_user'),
             'username'  => $this->request->getPost('username'),
             'password'  => password_hash($this->request->getPost('password'), PASSWORD_DEFAULT),
             'role'      => $this->request->getPost('role'),
+        ]);
+        (new AuditService())->log('tambah', 'users', (int) $id, null, [
+            'username' => $this->request->getPost('username'),
+            'role'     => $this->request->getPost('role'),
         ]);
 
         return redirect()->to(base_url('admin/user'))->with('success', 'Akun baru berhasil ditambahkan');
@@ -49,12 +52,22 @@ class User extends BaseController
 
     public function hapus($id)
     {
-        // Proteksi agar tidak menghapus akun yang sedang dipakai login
-        if (session()->get('id_user') == $id) {
+        $id   = (int) $id;
+        $user = $this->userModel->find($id);
+
+        if (! $user) {
+            return redirect()->to(base_url('admin/user'))->with('error', 'Akun tidak ditemukan.');
+        }
+        if ((int) session()->get('id_user') === $id) {
             return redirect()->to(base_url('admin/user'))->with('error', 'Anda tidak bisa menghapus akun sendiri!');
+        }
+        if ($user['role'] === 'admin' && $this->userModel->where('role', 'admin')->countAllResults() <= 1) {
+            return redirect()->to(base_url('admin/user'))->with('error', 'Admin terakhir tidak boleh dihapus.');
         }
 
         $this->userModel->delete($id);
-        return redirect()->to(base_url('admin/user'))->with('success', 'Admin berhasil dihapus');
+        (new AuditService())->log('hapus', 'users', $id, ['username' => $user['username'], 'role' => $user['role']], null);
+
+        return redirect()->to(base_url('admin/user'))->with('success', 'Akun berhasil dihapus');
     }
 }

@@ -31,8 +31,9 @@ class Home extends BaseController
         }
 
         // 1. Widget Box (Tetap Akumulasi Global)
-        $pemasukan = $db->table('sedekah_masuk')->selectSum('nominal')->get()->getRow()->nominal ?? 0;
-        $pengeluaran = $db->table('sedekah_keluar')->selectSum('nominal')->get()->getRow()->nominal ?? 0;
+        $total       = (new \Modules\Infaq\Services\FinanceService())->totals();
+        $pemasukan   = $total['masuk'];
+        $pengeluaran = $total['keluar'];
 
         // 2. Data Matrik dalam rentang waktu terpilih
         $transaksi = $db->table('sedekah_masuk')

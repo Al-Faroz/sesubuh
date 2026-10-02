@@ -10,7 +10,7 @@ class KreditModel extends Model
     protected $primaryKey       = 'id_kredit';
     protected $useAutoIncrement = true;
     protected $returnType       = 'array';
-    protected $allowedFields    = ['tanggal', 'nominal', 'keterangan', 'created_by'];
+    protected $allowedFields    = ['tanggal', 'nominal', 'keterangan', 'created_by', 'updated_by', 'updated_at'];
 
     protected $useTimestamps = true;
     protected $createdField  = 'created_at';

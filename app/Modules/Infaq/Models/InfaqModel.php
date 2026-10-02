@@ -10,7 +10,7 @@ class InfaqModel extends Model
     protected $primaryKey       = 'id_debet';
     protected $useAutoIncrement = true;
     protected $returnType       = 'array';
-    protected $allowedFields    = ['id_kelas', 'nominal', 'tanggal', 'created_by'];
+    protected $allowedFields    = ['id_kelas', 'nominal', 'tanggal', 'created_by', 'updated_by', 'updated_at'];
 
     protected $useTimestamps = true;
     protected $createdField  = 'created_at';

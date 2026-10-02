@@ -8,7 +8,7 @@ $routes->setDefaultNamespace('Modules\Infaq\Controllers');
 $routes->get('/', 'Home::index');
 $routes->get('login', 'Auth::index');
 $routes->post('login/auth', 'Auth::loginAction');
-$routes->get('logout', 'Auth::logout');
+$routes->post('logout', 'Auth::logout');
 
 $routes->group('admin', ['filter' => 'auth'], function ($routes) {
     $routes->get('/', 'Dashboard::index');
@@ -21,6 +21,17 @@ $routes->group('admin', ['filter' => 'auth'], function ($routes) {
         $routes->get('user', 'User::index');
         $routes->post('user/simpan', 'User::simpan');
         $routes->post('user/hapus/(:num)', 'User::hapus/$1');
+
+        // Pengaturan pejabat, data kelas, backup, riwayat: admin saja
+        $routes->get('laporan/pengaturan', 'Laporan::pengaturan');
+        $routes->post('laporan/pengaturan', 'Laporan::pengaturan');
+        $routes->get('kelas', 'Kelas::index');
+        $routes->post('kelas/simpan', 'Kelas::simpan');
+        $routes->post('kelas/update/(:num)', 'Kelas::update/$1');
+        $routes->post('kelas/status/(:num)', 'Kelas::status/$1');
+        $routes->get('backup', 'Backup::index');
+        $routes->post('backup/unduh', 'Backup::unduh');
+        $routes->get('audit', 'Audit::index');
     });
 
     // --- MODUL LAPORAN & PENGATURAN ---
@@ -28,9 +39,6 @@ $routes->group('admin', ['filter' => 'auth'], function ($routes) {
         $routes->get('matrik', 'Laporan::matrik');
         $routes->get('kas', 'Laporan::kas');
 
-        // Rute Pengaturan Pejabat (GET untuk tampil, POST untuk update)
-        $routes->get('pengaturan', 'Laporan::pengaturan');
-        $routes->post('pengaturan', 'Laporan::pengaturan');
         $routes->get('cetak_pdf', 'Laporan::cetak_pdf');
         $routes->get('cetak_matrik_pdf', 'Laporan::cetak_matrik_pdf');
     });
@@ -45,6 +53,7 @@ $routes->group('admin', ['filter' => 'auth'], function ($routes) {
     $routes->group('kredit', function ($routes) {
         $routes->get('/', 'Kredit::index');
         $routes->post('save', 'Kredit::save');
+        $routes->post('update/(:num)', 'Kredit::update/$1');
         $routes->post('delete/(:num)', 'Kredit::delete/$1');
     });
 

@@ -3,27 +3,26 @@
 namespace Modules\Infaq\Controllers;
 
 use App\Controllers\BaseController;
+use Modules\Infaq\Services\AuditService;
+use Modules\Infaq\Services\FinanceService;
 
 class Dashboard extends BaseController
 {
     public function index()
     {
-        $db = \Config\Database::connect();
-        $hari_ini = date('Y-m-d');
+        $fin       = new FinanceService();
+        $t         = $fin->totals();
+        $jmlKelas  = \Config\Database::connect()->table('kelas')->where('status', 'aktif')->countAllResults();
 
-        // 1. Hitung Ringkasan Saldo (Widget Box)
-        $pemasukan = $db->table('sedekah_masuk')->selectSum('nominal')->get()->getRow()->nominal ?? 0;
-        $pengeluaran = $db->table('sedekah_keluar')->selectSum('nominal')->get()->getRow()->nominal ?? 0;
-        $partisipasi = $db->table('sedekah_masuk')->where('tanggal', $hari_ini)->countAllResults(false);
-
-        $data = [
+        return view('Modules\Infaq\Views\v_dashboard', [
             'title'             => 'Dashboard Utama',
-            'total_pemasukan'   => $pemasukan,
-            'total_pengeluaran' => $pengeluaran,
-            'saldo_akhir'       => $pemasukan - $pengeluaran,
-            'partisipasi_today' => $partisipasi . ' Kelas',
-        ];
-
-        return view('Modules\Infaq\Views\v_dashboard', $data);
+            'total_pemasukan'   => $t['masuk'],
+            'total_pengeluaran' => $t['keluar'],
+            'saldo_akhir'       => $t['saldo'],
+            'partisipasi_today' => $fin->partisipasi(date('Y-m-d')) . ' dari ' . $jmlKelas . ' kelas',
+            'tren'              => $fin->trenHarian(10),
+            'jml_kelas'         => $jmlKelas,
+            'aktivitas'         => (new AuditService())->terbaru(8),
+        ]);
     }
 }

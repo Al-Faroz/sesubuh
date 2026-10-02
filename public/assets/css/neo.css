@@ -343,3 +343,19 @@ body.neo{font-size:16px}
   :root,:root[data-theme="dark"]{--bg:#fff;--text:#000;--muted:#333;--accent:#0f6b52;--on-accent:#000;--ok:#000;--bad:#000;--surface-2:transparent;--surface-solid:#fff;--line:#999}
   .theme-toggle,.pub-top{display:none!important}
 }
+
+/* ===== Fase 6: pager, aksi baris, feed, dashboard ===== */
+.nav-form{margin:0}
+.neo-nav .nav-btn.out,.neo-nav .nav-btn.out i{color:var(--danger)}
+.pager{display:flex;align-items:center;justify-content:center;gap:var(--s4);flex-wrap:wrap;margin-top:var(--s5)}
+.pager .is-off{opacity:.45;cursor:not-allowed;box-shadow:var(--inset)}
+.row-actions{display:inline-flex;gap:var(--s2);align-items:center;justify-content:center}
+.row-actions form{margin:0}
+.dash-grid{display:grid;grid-template-columns:2fr 1fr;gap:var(--s5);align-items:start}
+.dash-grid>*{min-width:0}
+@media (max-width:900px){.dash-grid{grid-template-columns:1fr}}
+.feed{list-style:none;margin:0;padding:0;display:grid;gap:var(--s3)}
+.feed li{display:grid;grid-template-columns:auto 1fr;gap:var(--s2) var(--s3);align-items:center;padding-bottom:var(--s3);border-bottom:1px solid var(--line)}
+.feed li:last-child{border-bottom:0;padding-bottom:0}
+.feed time{grid-column:2;margin:0}
+@media (max-width:640px){.row-actions{justify-content:flex-end}}

@@ -20,7 +20,15 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // Dialog
   document.querySelectorAll('[data-dialog]').forEach(function (b) {
-    b.addEventListener('click', function () { document.getElementById(b.dataset.dialog).showModal(); });
+    b.addEventListener('click', function () {
+      var d = document.getElementById(b.dataset.dialog);
+      if (b.dataset.action) { var f = d.querySelector('form'); if (f) f.action = b.dataset.action; }
+      if (b.dataset.fill) {
+        var v = JSON.parse(b.dataset.fill);
+        Object.keys(v).forEach(function (k) { var el = d.querySelector('[name="' + k + '"]'); if (el) el.value = v[k]; });
+      }
+      d.showModal();
+    });
   });
   document.querySelectorAll('[data-close-dialog]').forEach(function (b) {
     b.addEventListener('click', function () { b.closest('dialog').close(); });

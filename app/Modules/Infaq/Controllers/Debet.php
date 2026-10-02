@@ -52,24 +52,40 @@ class Debet extends BaseController
             return redirect()->to(base_url('admin/debet'))->with('error', 'Tanggal atau data tidak valid.');
         }
 
-        // Hanya kelas aktif yang boleh diisi
-        $kelasValid = array_column($this->kelasModel->getAktif(), 'id_kelas');
+        $namaKelas = array_column($this->kelasModel->getAktif(), 'nama_kelas', 'id_kelas');
 
-        foreach ($nominal as $id_kelas => $value) {
-            if (! in_array((int) $id_kelas, array_map('intval', $kelasValid), true)) {
-                continue;
-            }
-            if ($value === '' || ! is_numeric($value) || $value < 0) {
-                continue;
-            }
-            $this->infaqModel->upsertInfaq([
-                'id_kelas'   => (int) $id_kelas,
-                'nominal'    => (int) $value,
-                'tanggal'    => $tanggal,
-                'created_by' => $userId,
-            ]);
+        $existing = [];
+        foreach ($this->infaqModel->where('tanggal', $tanggal)->findAll() as $r) {
+            $existing[(int) $r['id_kelas']] = $r;
         }
 
-        return redirect()->to(base_url('admin/debet?tanggal=' . $tanggal))->with('success', 'Data berhasil diperbarui.');
+        $audit = new \Modules\Infaq\Services\AuditService();
+        $db    = \Config\Database::connect();
+        $tambah = $ubah = 0;
+
+        $db->transStart();
+        foreach ($nominal as $idKelas => $value) {
+            $id = (int) $idKelas;
+            if (! isset($namaKelas[$id]) || $value === '' || ! is_numeric($value) || $value < 0) {
+                continue;
+            }
+            $nom = (int) $value;
+
+            if (! isset($existing[$id])) {
+                $newId = $this->infaqModel->insert(['id_kelas' => $id, 'nominal' => $nom, 'tanggal' => $tanggal, 'created_by' => $userId]);
+                $audit->log('tambah', 'sedekah_masuk', (int) $newId, null, ['kelas' => $namaKelas[$id], 'tanggal' => $tanggal, 'nominal' => $nom]);
+                $tambah++;
+            } elseif ((int) round((float) $existing[$id]['nominal']) !== $nom) {
+                $lama = (int) round((float) $existing[$id]['nominal']);
+                $this->infaqModel->update($existing[$id]['id_debet'], ['nominal' => $nom, 'updated_by' => $userId, 'updated_at' => date('Y-m-d H:i:s')]);
+                $audit->log('ubah', 'sedekah_masuk', (int) $existing[$id]['id_debet'], ['kelas' => $namaKelas[$id], 'tanggal' => $tanggal, 'nominal' => $lama], ['kelas' => $namaKelas[$id], 'tanggal' => $tanggal, 'nominal' => $nom]);
+                $ubah++;
+            }
+        }
+        $db->transComplete();
+
+        $pesan = ($tambah + $ubah) === 0 ? 'Tidak ada perubahan data.' : "Tersimpan: {$tambah} baru, {$ubah} diubah.";
+
+        return redirect()->to(base_url('admin/debet?tanggal=' . $tanggal))->with('success', $pesan);
     }
 }
