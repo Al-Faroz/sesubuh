@@ -69,6 +69,6 @@
 </div>
 
 <script type="application/json" id="chart-data"><?= json_encode(['labels' => $tren['labels'], 'values' => $tren['values'], 'kelas' => $tren['kelas'], 'total' => $jml_kelas], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?></script>
-<script src="<?= base_url('public/assets/plugins/chart.js/Chart.bundle.min.js') ?>"></script>
-<script src="<?= base_url('public/assets/js/neo-chart.js') ?>"></script>
+<script src="<?= neo_asset('plugins/chart.js/Chart.bundle.min.js') ?>"></script>
+<script src="<?= neo_asset('js/neo-chart.js') ?>"></script>
 <?= $this->endSection() ?>

@@ -7,7 +7,7 @@ echo view('Modules\Infaq\Views\layout\v_sidebar');
 <main class="neo-main">
     <div class="neo-top">
         <button type="button" class="neo-burger" data-neo-toggle aria-controls="neo-side" aria-expanded="false" aria-label="Buka menu"><i class="fas fa-bars"></i></button>
-        <img class="logo-plate " src="<?= base_url('public/assets/img/logo.png') ?>" alt="Logo MIN 6 Jember" width="36" height="36">
+        <img class="logo-plate " src="<?= neo_asset('img/logo.png') ?>" alt="Logo MIN 6 Jember" width="36" height="36">
         <span>SEDEKAH SUBUH</span>
         <button type="button" class="theme-toggle" data-theme-toggle aria-label="Ganti mode tampilan" style="margin-left:auto"><i class="fas fa-moon"></i></button>
     </div>

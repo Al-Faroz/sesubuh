@@ -127,11 +127,19 @@ foreach ($transaksi as $t) {
 
 <body>
 
-    <div class="text-center">
-        <h3 style="margin: 0;">REKAPITULASI SEDEKAH SUBUH PER KELAS</h3>
-        <h4 style="margin: 5px 0;">MIN 6 JEMBER</h4>
-        <p style="margin: 0;">Periode: <?= date('d/m/Y', strtotime($tgl_awal)) ?> s/d <?= date('d/m/Y', strtotime($tgl_akhir)) ?></p>
-    </div>
+    <table style="width: 100%; border: 0; border-bottom: 2px solid #000; margin-bottom: 8px;" cellspacing="0" cellpadding="0">
+        <tr>
+            <td style="width: 75px; border: 0; padding: 0 0 6px 0; vertical-align: middle;">
+                <?php if ($logo = logo_pdf_uri()) : ?><img src="<?= $logo ?>" width="68" height="68"><?php endif; ?>
+            </td>
+            <td style="border: 0; padding: 0 0 6px 0; text-align: center; vertical-align: middle;">
+                <h3 style="margin: 0;">REKAPITULASI SEDEKAH SUBUH PER KELAS</h3>
+                <h4 style="margin: 5px 0;">MIN 6 JEMBER</h4>
+                <p style="margin: 0;">Periode: <?= date('d/m/Y', strtotime($tgl_awal)) ?> s/d <?= date('d/m/Y', strtotime($tgl_akhir)) ?></p>
+            </td>
+            <td style="width: 75px; border: 0;"></td>
+        </tr>
+    </table>
     <br>
 
     <table class="table">

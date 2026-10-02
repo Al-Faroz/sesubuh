@@ -18,8 +18,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
-    <link rel="stylesheet" href="<?= base_url('public/assets/plugins/fontawesome-free/css/all.min.css') ?>">
-    <link rel="stylesheet" href="<?= base_url('public/assets/css/neo.css') ?>">
+    <link rel="stylesheet" href="<?= neo_asset('plugins/fontawesome-free/css/all.min.css') ?>">
+    <link rel="stylesheet" href="<?= neo_asset('css/neo.css') ?>">
 </head>
 
 <body class="neo">

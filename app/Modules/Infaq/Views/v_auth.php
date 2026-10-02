@@ -18,15 +18,15 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
-    <link rel="stylesheet" href="<?= base_url('public/assets/plugins/fontawesome-free/css/all.min.css') ?>">
-    <link rel="stylesheet" href="<?= base_url('public/assets/css/neo.css') ?>">
+    <link rel="stylesheet" href="<?= neo_asset('plugins/fontawesome-free/css/all.min.css') ?>">
+    <link rel="stylesheet" href="<?= neo_asset('css/neo.css') ?>">
 </head>
 
 <body class="neo">
     <main class="login-wrap">
         <button type="button" class="theme-toggle theme-float" data-theme-toggle aria-label="Ganti mode tampilan"><i class="fas fa-moon"></i></button>
         <div class="login-card">
-            <img class="logo-plate login-logo-img" src="<?= base_url('public/assets/img/logo.png') ?>" alt="Logo MIN 6 Jember" width="88" height="88">
+            <img class="logo-plate login-logo-img" src="<?= neo_asset('img/logo.png') ?>" alt="Logo MIN 6 Jember" width="88" height="88">
             <h1>Sedekah Subuh</h1>
             <p class="sub">MIN 6 Jember &middot; Khusus Admin &amp; Operator</p>
 
@@ -53,7 +53,7 @@
             <a href="<?= base_url('/') ?>" class="login-back"><i class="fas fa-arrow-left"></i> Kembali ke Beranda</a>
         </div>
     </main>
-    <script src="<?= base_url('public/assets/js/neo.js') ?>"></script>
+    <script src="<?= neo_asset('js/neo.js') ?>"></script>
     <script>
         document.getElementById('toggle-pass').addEventListener('click', function() {
             var input = document.getElementById('password');

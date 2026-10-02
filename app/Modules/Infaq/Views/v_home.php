@@ -18,14 +18,14 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
-    <link rel="stylesheet" href="<?= base_url('public/assets/plugins/fontawesome-free/css/all.min.css') ?>">
-    <link rel="stylesheet" href="<?= base_url('public/assets/css/neo.css') ?>">
+    <link rel="stylesheet" href="<?= neo_asset('plugins/fontawesome-free/css/all.min.css') ?>">
+    <link rel="stylesheet" href="<?= neo_asset('css/neo.css') ?>">
 </head>
 
 <body class="neo">
     <header class="pub-top">
         <div class="in">
-            <a class="brand" href="<?= base_url() ?>"><img class="logo-plate " src="<?= base_url('public/assets/img/logo.png') ?>" alt="Logo MIN 6 Jember" width="40" height="40"> SEDEKAH SUBUH</a>
+            <a class="brand" href="<?= base_url() ?>"><img class="logo-plate " src="<?= neo_asset('img/logo.png') ?>" alt="Logo MIN 6 Jember" width="40" height="40"> SEDEKAH SUBUH</a>
             <button type="button" class="theme-toggle" data-theme-toggle aria-label="Ganti mode tampilan"><i class="fas fa-moon"></i></button>
             <a href="<?= base_url('login') ?>" class="btn btn-primary btn-sm"><i class="fas fa-lock"></i> Login Admin</a>
         </div>
@@ -33,7 +33,7 @@
 
     <main class="pub-wrap">
         <section class="pub-hero">
-            <img class="logo-plate hero-logo" src="<?= base_url('public/assets/img/logo.png') ?>" alt="Logo MIN 6 Jember" width="96" height="96">
+            <img class="logo-plate hero-logo" src="<?= neo_asset('img/logo.png') ?>" alt="Logo MIN 6 Jember" width="96" height="96">
             <span class="badge badge-info"><?= date('d/m/Y', strtotime($tgl_awal)) ?> &ndash; <?= date('d/m/Y', strtotime($tgl_akhir)) ?></span>
             <h1>Sedekah Subuh MIN 6 Jember</h1>
             <p>Laporan partisipasi kelas yang terbuka untuk seluruh warga madrasah.</p>
@@ -156,9 +156,9 @@
         'kelas'  => array_map(static fn($d) => $kelas_per_hari[$d] ?? 0, array_keys($harian)),
         'total'  => count($kelas),
     ], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?></script>
-    <script src="<?= base_url('public/assets/plugins/chart.js/Chart.bundle.min.js') ?>"></script>
-    <script src="<?= base_url('public/assets/js/neo.js') ?>"></script>
-    <script src="<?= base_url('public/assets/js/neo-chart.js') ?>"></script>
+    <script src="<?= neo_asset('plugins/chart.js/Chart.bundle.min.js') ?>"></script>
+    <script src="<?= neo_asset('js/neo.js') ?>"></script>
+    <script src="<?= neo_asset('js/neo-chart.js') ?>"></script>
 </body>
 
 </html>

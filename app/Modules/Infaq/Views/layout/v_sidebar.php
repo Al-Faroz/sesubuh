@@ -5,7 +5,7 @@ $admin = session()->get('role') === 'admin';
 ?>
 <aside class="neo-side" id="neo-side">
     <a href="<?= base_url('admin') ?>" class="neo-brand">
-        <img class="logo-plate " src="<?= base_url('public/assets/img/logo.png') ?>" alt="Logo MIN 6 Jember" width="44" height="44">
+        <img class="logo-plate " src="<?= neo_asset('img/logo.png') ?>" alt="Logo MIN 6 Jember" width="44" height="44">
         <span>SEDEKAH SUBUH<small>MIN 6 Jember</small></span>
     </a>
     <nav aria-label="Menu utama">
