@@ -1,0 +1,22 @@
+{
+  "name": "Sedekah Subuh MIN 6 Jember",
+  "short_name": "Sedekah Subuh",
+  "start_url": "../../../",
+  "display": "standalone",
+  "background_color": "#e6ebf2",
+  "theme_color": "#0f6b52",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

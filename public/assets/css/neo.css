@@ -315,17 +315,8 @@ body.neo{font-size:16px}
 .pub-hero{text-align:center;padding:var(--s6) 0 var(--s5)}
 .pub-hero h1{margin:var(--s3) 0 var(--s2);font-size:clamp(1.7rem,1.2rem + 2.2vw,2.6rem);font-weight:800;letter-spacing:-.02em}
 .pub-hero p{margin:0;color:var(--muted);font-size:1.05rem}
-.grid-2{display:grid;grid-template-columns:2fr 1fr;gap:var(--s5);align-items:start}
-.grid-2>*{min-width:0}
-.chart-box{position:relative;height:300px}
-.meter-list{list-style:none;margin:0;padding:0;display:grid;gap:var(--s4)}
-.meter-row{display:grid;grid-template-columns:auto 1fr;gap:var(--s3);align-items:center}
-.meter-row .rank{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;font-size:.85rem;font-weight:800;box-shadow:var(--inset)}
-.meter-row .top{display:flex;justify-content:space-between;gap:var(--s2);font-weight:600;margin-bottom:6px}
-.meter-row .top span:last-child{color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
-.meter{height:12px;border-radius:999px;box-shadow:var(--inset);overflow:hidden}
-.meter>span{display:block;height:100%;border-radius:999px;background:var(--accent)}
-@media (max-width:900px){.grid-2{grid-template-columns:1fr}.chart-box{height:260px}}
+.chart-box{position:relative;height:320px}
+@media (max-width:640px){.chart-box{height:240px}}
 
 /* ===== Responsif (menimpa skala jarak di layar kecil) ===== */
 @media (max-width:640px){
@@ -359,3 +350,29 @@ body.neo{font-size:16px}
 .feed li:last-child{border-bottom:0;padding-bottom:0}
 .feed time{grid-column:2;margin:0}
 @media (max-width:640px){.row-actions{justify-content:flex-end}}
+
+/* ===== Logo sekolah ===== */
+.logo-plate{display:block;flex:0 0 auto;border-radius:50%;background:#fff;padding:4px;object-fit:contain;box-shadow:var(--raised-sm)}
+.neo-brand .logo-plate{width:44px;height:44px}
+.neo-top .logo-plate{width:36px;height:36px}
+.pub-top .brand .logo-plate{width:40px;height:40px}
+.login-logo-img{width:88px;height:88px;padding:8px;margin:0 auto 14px}
+.hero-logo{width:96px;height:96px;padding:9px;margin:0 auto var(--s3)}
+@media (max-width:640px){.hero-logo{width:80px;height:80px}}
+
+/* ===== Halaman publik: ringkasan grafik & ubin kelas ===== */
+.mini-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:var(--s4);margin-bottom:var(--s5)}
+.mini{display:flex;flex-direction:column;gap:2px;padding:var(--s4);border-radius:var(--r-sm);box-shadow:var(--inset)}
+.mini-lbl{font-size:.8rem;font-weight:600;color:var(--muted)}
+.mini-val{font-size:1.25rem;font-weight:700;font-variant-numeric:tabular-nums}
+.mini-val small{font-size:.75em;font-weight:600;color:var(--muted)}
+.tile-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:var(--s4)}
+.tile{display:grid;gap:var(--s2);padding:var(--s4);border-radius:var(--r-sm);box-shadow:var(--raised-sm)}
+.tile-head{display:flex;align-items:center;justify-content:space-between;gap:var(--s2)}
+.tile-name{font-size:1.2rem;font-weight:800}
+.tile-amt{font-size:1.05rem;font-weight:700;font-variant-numeric:tabular-nums}
+.tile .hint{margin:0}
+.meter{height:10px;border-radius:999px;box-shadow:var(--inset);overflow:hidden}
+.meter>span{display:block;height:100%;border-radius:999px;background:var(--accent)}
+.neo .table-matrik th,.neo .table-matrik td{padding:.6rem .4rem}
+.neo .table-matrik td:first-child,.neo .table-matrik th:first-child{padding-left:.7rem;padding-right:.7rem}

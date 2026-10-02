@@ -13,6 +13,7 @@
             } catch (e) {}
         })();
     </script>
+<?= view('Modules\Infaq\Views\layout\v_icons') ?>
     <title>Login | Sedekah Subuh</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -25,7 +26,7 @@
     <main class="login-wrap">
         <button type="button" class="theme-toggle theme-float" data-theme-toggle aria-label="Ganti mode tampilan"><i class="fas fa-moon"></i></button>
         <div class="login-card">
-            <div class="login-logo"><i class="fas fa-hand-holding-heart"></i></div>
+            <img class="logo-plate login-logo-img" src="<?= base_url('public/assets/img/logo.png') ?>" alt="Logo MIN 6 Jember" width="88" height="88">
             <h1>Sedekah Subuh</h1>
             <p class="sub">MIN 6 Jember &middot; Khusus Admin &amp; Operator</p>
 

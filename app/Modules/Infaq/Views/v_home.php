@@ -13,6 +13,7 @@
             } catch (e) {}
         })();
     </script>
+<?= view('Modules\Infaq\Views\layout\v_icons') ?>
     <title><?= esc($title) ?></title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -24,7 +25,7 @@
 <body class="neo">
     <header class="pub-top">
         <div class="in">
-            <a class="brand" href="<?= base_url() ?>"><i class="fas fa-hand-holding-heart"></i> SEDEKAH SUBUH</a>
+            <a class="brand" href="<?= base_url() ?>"><img class="logo-plate " src="<?= base_url('public/assets/img/logo.png') ?>" alt="Logo MIN 6 Jember" width="40" height="40"> SEDEKAH SUBUH</a>
             <button type="button" class="theme-toggle" data-theme-toggle aria-label="Ganti mode tampilan"><i class="fas fa-moon"></i></button>
             <a href="<?= base_url('login') ?>" class="btn btn-primary btn-sm"><i class="fas fa-lock"></i> Login Admin</a>
         </div>
@@ -32,6 +33,7 @@
 
     <main class="pub-wrap">
         <section class="pub-hero">
+            <img class="logo-plate hero-logo" src="<?= base_url('public/assets/img/logo.png') ?>" alt="Logo MIN 6 Jember" width="96" height="96">
             <span class="badge badge-info"><?= date('d/m/Y', strtotime($tgl_awal)) ?> &ndash; <?= date('d/m/Y', strtotime($tgl_akhir)) ?></span>
             <h1>Sedekah Subuh MIN 6 Jember</h1>
             <p>Laporan partisipasi kelas yang terbuka untuk seluruh warga madrasah.</p>
@@ -62,37 +64,53 @@
             </div>
         </form>
 
-        <div class="grid-2">
-            <section class="card">
-                <div class="card-header"><h2 class="card-title"><i class="fas fa-chart-column ic-ok"></i> Tren pemasukan harian</h2><span class="badge badge-ok">Total Rp <?= number_format($total_periode, 0, ',', '.') ?></span></div>
-                <div class="card-body">
-                    <?php if ($harian) : ?>
-                        <div class="chart-box"><canvas id="chart-harian" role="img" aria-label="Grafik batang pemasukan per hari"></canvas></div>
-                    <?php else : ?>
-                        <p class="text-muted mb-0">Belum ada data pada periode ini.</p>
-                    <?php endif; ?>
-                </div>
-            </section>
+        <section class="card">
+            <div class="card-header">
+                <h2 class="card-title"><i class="fas fa-chart-line ic-ok"></i> Tren pemasukan harian</h2>
+                <span class="badge badge-info"><?= (int) $hari_total ?> hari aktif</span>
+            </div>
+            <div class="card-body">
+                <?php if ($harian) : ?>
+                    <div class="mini-stats">
+                        <div class="mini"><span class="mini-lbl">Total periode</span><span class="mini-val num-in">Rp <?= number_format($total_periode, 0, ',', '.') ?></span></div>
+                        <div class="mini"><span class="mini-lbl">Rata-rata per hari</span><span class="mini-val">Rp <?= number_format($rata_harian, 0, ',', '.') ?></span></div>
+                        <div class="mini"><span class="mini-lbl">Hari tertinggi</span><span class="mini-val">Rp <?= number_format($tertinggi['total'], 0, ',', '.') ?> <small><?= date('d/m', strtotime($tertinggi['tanggal'])) ?></small></span></div>
+                    </div>
+                    <div class="chart-box"><canvas id="chart-harian" role="img" aria-label="Grafik garis pemasukan per hari"></canvas></div>
+                <?php else : ?>
+                    <p class="text-muted mb-0">Belum ada data pada periode ini.</p>
+                <?php endif; ?>
+            </div>
+        </section>
 
-            <section class="card">
-                <div class="card-header"><h2 class="card-title"><i class="fas fa-trophy ic-warn"></i> Peringkat kelas</h2></div>
-                <div class="card-body">
-                    <?php $totals = array_column($peringkat, 'total');
-                    $maks = max(1, $totals ? max($totals) : 1); ?>
-                    <ol class="meter-list">
-                        <?php foreach ($peringkat as $i => $p) : ?>
-                            <li class="meter-row">
-                                <span class="rank"><?= $i + 1 ?></span>
-                                <div>
-                                    <div class="top"><span><?= esc($p['nama']) ?></span><span>Rp <?= number_format($p['total'], 0, ',', '.') ?></span></div>
-                                    <div class="meter" aria-hidden="true"><span style="width:<?= round($p['total'] / $maks * 100) ?>%"></span></div>
-                                </div>
-                            </li>
-                        <?php endforeach; ?>
-                    </ol>
+        <section class="card">
+            <div class="card-header">
+                <h2 class="card-title"><i class="fas fa-medal ic-warn"></i> Partisipasi per kelas</h2>
+                <span class="hint">Diurutkan menurut total setoran periode ini</span>
+            </div>
+            <div class="card-body">
+                <?php $uniktop = $peringkat && $peringkat[0]['total'] > ($peringkat[1]['total'] ?? 0); ?>
+                <div class="tile-grid">
+                    <?php foreach ($peringkat as $i => $p) : ?>
+                        <article class="tile">
+                            <div class="tile-head">
+                                <span class="tile-name"><?= esc($p['nama']) ?><?php if ($i === 0 && $uniktop) : ?> <i class="fas fa-trophy ic-warn" title="Setoran tertinggi"></i><?php endif; ?></span>
+                                <?php if ($p['total'] <= 0) : ?>
+                                    <span class="badge badge-muted">Belum setor</span>
+                                <?php elseif ($hari_total > 0 && $p['hari'] >= $hari_total) : ?>
+                                    <span class="badge badge-ok">Rutin</span>
+                                <?php else : ?>
+                                    <span class="badge badge-info">Sebagian</span>
+                                <?php endif; ?>
+                            </div>
+                            <div class="tile-amt">Rp <?= number_format($p['total'], 0, ',', '.') ?></div>
+                            <div class="meter" aria-hidden="true"><span style="width:<?= $hari_total ? round($p['hari'] / $hari_total * 100) : 0 ?>%"></span></div>
+                            <div class="hint">Setor <?= (int) $p['hari'] ?> dari <?= (int) $hari_total ?> hari</div>
+                        </article>
+                    <?php endforeach; ?>
                 </div>
-            </section>
-        </div>
+            </div>
+        </section>
 
         <section class="card">
             <div class="card-header"><h2 class="card-title"><i class="fas fa-table ic-info"></i> Matrik per kelas</h2></div>
@@ -135,6 +153,8 @@
     <script type="application/json" id="chart-data"><?= json_encode([
         'labels' => array_map(static fn($d) => date('d/m', strtotime($d)), array_keys($harian)),
         'values' => array_values($harian),
+        'kelas'  => array_map(static fn($d) => $kelas_per_hari[$d] ?? 0, array_keys($harian)),
+        'total'  => count($kelas),
     ], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?></script>
     <script src="<?= base_url('public/assets/plugins/chart.js/Chart.bundle.min.js') ?>"></script>
     <script src="<?= base_url('public/assets/js/neo.js') ?>"></script>

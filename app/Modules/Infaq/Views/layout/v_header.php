@@ -13,6 +13,7 @@
             } catch (e) {}
         })();
     </script>
+<?= view('Modules\Infaq\Views\layout\v_icons') ?>
     <title><?= esc($title ?? 'Dashboard') ?> | Sedekah Subuh</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

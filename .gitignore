@@ -133,3 +133,13 @@ _modules/*
 
 # Skrip migrasi (tanpa data) boleh masuk repo
 !database/migrasi_*.sql
+
+#-------------------------
+# Berkas lokal: sertifikat/kunci, patch, cache PDF
+#-------------------------
+*.pem
+*.key
+*.patch
+localhost+*
+writable/temp/*
+!writable/temp/index.html
